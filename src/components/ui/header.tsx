@@ -9,6 +9,7 @@ import { MenuMobile, ThemeToggle } from '@/components/ui'
 import { NavLinkType } from '@/types'
 import { useEffect, useRef } from 'react'
 import { ButtonLogin } from '@/components/buttons'
+import Link from 'next/link'
 
 type HeaderProps = {
 	navLinks: NavLinkType[]
@@ -71,23 +72,34 @@ export default function Header({ navLinks }: HeaderProps) {
 				{/* NAVLINKS */}
 				<ul ref={navLinksRef} className='relative gap-8 lg:flex items-end '>
 					{/* START */}
-					<button
-						onClick={() => router.push('/')}
+					<Link
+						href='/'
 						onMouseEnter={() => animateBottomBorder('/')}
-						disabled={pathname === '/'}>
+						onClick={(e) => {
+							e.preventDefault()
+							router.push('/')
+						}}
+						role='button'
+						aria-current={pathname === '/' ? 'page' : undefined}>
 						Start
-					</button>
+					</Link>
 
 					{/* LINKS */}
 					{navLinks.map(
 						(link, index) =>
 							link.slug !== '/' && (
-								<button
+								<Link
 									key={`panel-button-${index}`}
-									onClick={() => router.push(link.slug)}
-									onMouseEnter={() => animateBottomBorder(link.slug)}>
+									href={link.slug}
+									onMouseEnter={() => animateBottomBorder(link.slug)}
+									onClick={(e) => {
+										e.preventDefault()
+										router.push(`/${link.slug}`)
+									}}
+									role='button'
+									aria-current={pathname === '/' ? 'page' : undefined}>
 									{link.label}
-								</button>
+								</Link>
 							)
 					)}
 					{/* BOTTOM BORDER */}

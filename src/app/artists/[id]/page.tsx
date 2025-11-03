@@ -1,6 +1,4 @@
-import Artist from '@/models/Artist'
-import { connectToDatabase } from '@/config/database'
-
+import { ArtistService } from '@/lib/services/artistService'
 import { EmptyResults, PageWrapper } from '@/components/ui'
 
 export default async function Page({
@@ -8,12 +6,8 @@ export default async function Page({
 }: {
 	params: Promise<{ id: string }>
 }) {
-	await connectToDatabase()
-
-	const artist = await Artist.findById((await params).id)
-
-	const artistCount = await Artist.countDocuments({ _id: (await params).id })
-	console.log('Documents with this ID:', artistCount)
+	const { id } = await params
+	const artist = await ArtistService.getArtistById(id)
 
 	if (!artist) {
 		return (
@@ -22,7 +16,7 @@ export default async function Page({
 	}
 
 	return (
-		<PageWrapper pageName='properties'>
+		<PageWrapper pageName='artist-detail'>
 			<h1 className='heading-display text-secondary'>{artist.businessName}</h1>
 			<p>{artist.description}</p>
 		</PageWrapper>

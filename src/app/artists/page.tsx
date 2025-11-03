@@ -1,5 +1,5 @@
-import { connectToDatabase } from '@/config/database'
-import Artist from '@/models/Artist'
+import { connectToDatabase } from '@/lib/services/database'
+import Artist from '@/lib/models/Artist'
 import { ArtistType } from '@/types'
 
 import { ArtistCard } from '@/components'
