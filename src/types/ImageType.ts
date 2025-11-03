@@ -1,5 +1,5 @@
 export type ImageType = {
-	src: string
+	url: string
 	alt: string
 	width: number
 	height: number

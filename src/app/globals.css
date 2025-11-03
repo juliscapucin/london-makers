@@ -44,6 +44,8 @@
 
 	--max-width-desktop: 1800px;
 
+	--breakpoint-3xl: 120rem;
+
 	/* Heights based on Tailwind's spacing scale: --spacing: 0.25rem /* 4px */
 	--height-header: calc(var(--spacing) * 40) /* [40] 10rem = 160px */;
 	--height-footer: calc(var(--spacing) * 150); /* [150] 37.5rem = 600px */

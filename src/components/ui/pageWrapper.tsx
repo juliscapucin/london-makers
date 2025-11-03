@@ -117,25 +117,23 @@ export default function PageWrapper({
 			<div id='smooth-wrapper' className='z-0 pointer-events-none'>
 				{/* GSAP SMOOTHER CONTENT */}
 				<div id='smooth-content' className={`z-0 pointer-events-none`}>
-					{/* PAGE CONTENT BACKGROUND / MASK */}
+					{/* PAGE CONTENT BACKGROUND */}
 					<div
 						ref={pageContentRef}
 						className={`gsap-page-wrapper min-h-screen w-full pointer-events-auto pt-[var(--height-header)] ${
 							pageWrapperStyles ? pageWrapperStyles : ''
 						}`}>
-						{/* PAGE CONTENT GRID */}
+						{/* PAGE CONTENT CONTAINER */}
 						<div
-							className={`relative mx-auto grid grid-cols-14 z-0 pointer-events-auto ${
-								hasContainer ? 'container pb-32' : ''
+							className={`relative pointer-events-auto ${
+								hasContainer ? 'container pb-32 mx-auto' : ''
 							}`}>
 							{/* MAIN CONTENT */}
 							{/* Keep children in column 2 to 13 */}
 							<main
 								id='main-content' // Add id for skip link
 								tabIndex={-1} // Make focusable for skip link
-								className={`col-start-3 md:col-start-2 xl-col-start-1 col-end-15 md:col-end-14 xl:col-end-14 ${
-									classes ? classes : ''
-								}`}>
+								className={`${classes ? classes : ''}`}>
 								{children}
 							</main>
 						</div>

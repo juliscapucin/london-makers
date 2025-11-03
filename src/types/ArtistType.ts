@@ -1,3 +1,5 @@
+import { ImageType } from './ImageType'
+
 export type ArtistType = {
 	_id: string
 	owner: string
@@ -29,7 +31,7 @@ export type ArtistType = {
 		price: number
 	}>
 	specialties: string[]
-	images: string[]
+	images: ImageType[]
 	is_featured: boolean
 	createdAt: Date
 	updatedAt: Date

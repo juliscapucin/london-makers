@@ -1,3 +1,4 @@
+import Container from './container'
 import EmptyResults from './emptyResults'
 import ExternalLink from './externalLink'
 import Header from './header'
@@ -9,6 +10,7 @@ import ThemeToggle from './themeToggle'
 import Search from './search'
 
 export {
+	Container,
 	EmptyResults,
 	ExternalLink,
 	Header,
