@@ -29,8 +29,8 @@
 	--text-headline-large: 57px;
 	--text-headline-medium: 40px;
 	--text-headline-small: 28px;
-	--text-title-large: 40px;
-	--text-title-medium: 28px;
+	--text-title-large: 32px;
+	--text-title-medium: 25px;
 	--text-title-small: 20px;
 	--text-navlink-large: 22px;
 	--text-navlink-medium: 20px;
@@ -168,6 +168,10 @@
 
 	.text-paragraph {
 		@apply text-body-small md:text-body-medium max-w-prose text-pretty lg:text-body-large;
+	}
+
+	.text-label {
+		@apply text-label-small md:text-label-medium lg:text-label-large uppercase leading-5;
 	}
 
 	/* NAVLINK STYLES */

@@ -22,6 +22,8 @@ export default async function Page({
 		)
 	}
 
+	console.log(artist.rates)
+
 	return (
 		<PageWrapper pageName='artist-detail' classes='pb-32' hasContainer={false}>
 			{/* IMAGES */}
@@ -56,9 +58,7 @@ export default async function Page({
 							{artist.businessName}
 						</h1>
 						<div className='flex flex-wrap items-center gap-4'>
-							<span className='pill-button border border-secondary'>
-								{artist.type}
-							</span>
+							<span className='pill-button bg-accent-2'>{artist.type}</span>
 							{artist.is_featured && (
 								<span className='pill-button bg-tertiary text-primary'>
 									Featured Artist
@@ -75,12 +75,12 @@ export default async function Page({
 					{/* SPECIALTIES */}
 					{artist.specialties && artist.specialties.length > 0 && (
 						<section className='space-y-4'>
-							<h2 className='heading-title'>Specialties</h2>
+							<h2 className='heading-headline'>Specialties</h2>
 							<div className='flex flex-wrap gap-2'>
 								{artist.specialties.map((specialty, index) => (
 									<span
 										key={index}
-										className='px-3 py-1 bg-accent-3 rounded-full text-sm'>
+										className='pill-button border border-secondary'>
 										{specialty}
 									</span>
 								))}
@@ -92,15 +92,15 @@ export default async function Page({
 					{artist.rates && artist.rates.length > 0 && (
 						<section className='space-y-4'>
 							<h2 className='heading-headline text-secondary'>Pricing</h2>
-							<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+							<div className='flex gap-4'>
 								{artist.rates.map((rate, index) => (
 									<div
 										key={index}
-										className='p-4 border border-accent-1 rounded-lg bg-accent-2/50'>
-										<h3 className='font-semibold text-secondary capitalize'>
+										className='flex-1 p-4 border border-accent-1 rounded-lg bg-accent-2/50'>
+										<h3 className='text-label'>
 											{rate.name.replace('_', ' ')}
 										</h3>
-										<p className='text-2xl font-bold text-tertiary'>
+										<p className='text-link-lg text-tertiary font-bold'>
 											${rate.price}
 										</p>
 									</div>
