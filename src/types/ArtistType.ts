@@ -21,10 +21,7 @@ export type ArtistType = {
 	employees?: number
 	physical_stores?: number
 	socials: {
-		instagram?: string
-		facebook?: string
-		bluesky?: string
-		tiktok?: string
+		[key: string]: string
 	}
 	rates: Array<{
 		name: string

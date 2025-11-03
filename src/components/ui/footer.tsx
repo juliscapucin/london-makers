@@ -9,7 +9,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 import { ExternalLink, Logo } from '@/components/ui'
 
-import type { NavLink as NavLinkType } from '@/types'
+import type { NavLinkType } from '@/types'
 
 type FooterProps = {
 	navLinks: NavLinkType[]
@@ -52,14 +52,14 @@ export default function Footer({ navLinks }: FooterProps) {
 	return (
 		<footer
 			ref={footerContainerRef}
-			className={`relative h-footer pointer-events-auto overflow-clip grid grid-cols-14`}>
+			className={`relative h-footer pointer-events-auto overflow-clip grid grid-cols-14 bg-secondary text-primary`}>
 			{/* CONTENT */}
 			<div
 				ref={footerContentRef}
 				className={`relative w-full px-2 col-start-2 col-end-14 transition-[background-color] duration-800 container mx-auto py-8 flex flex-col`}>
 				{/* LOGO */}
-				<div className='mt-8 md:mb-8 md:scale-150 origin-top-left'>
-					<Logo />
+				<div className='mt-8 md:mb-8'>
+					<Logo classes='heading-display' />
 				</div>
 				{/* COPYRIGHT */}
 				<p className='mb-8 md:mb-0'>
@@ -77,9 +77,7 @@ export default function Footer({ navLinks }: FooterProps) {
 						<p className='text-paragraph mt-8'>
 							Read more about Terms & Conditions, Cookies, and Privacy Policies
 							at{' '}
-							<ExternalLink
-								variant='secondary'
-								href='https://unsplash.com/license'>
+							<ExternalLink href='https://unsplash.com/license'>
 								Unsplash.com
 							</ExternalLink>{' '}
 						</p>
@@ -88,7 +86,7 @@ export default function Footer({ navLinks }: FooterProps) {
 					{/* CREDIT */}
 					<p className='mt-4 md:mt-0'>
 						Crafted by{' '}
-						<ExternalLink variant='primary' href='https://juliscapucin.com'>
+						<ExternalLink href='https://juliscapucin.com'>
 							Juli Scapucin
 						</ExternalLink>
 					</p>

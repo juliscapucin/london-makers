@@ -1,6 +1,12 @@
 import { ArtistService } from '@/lib/services/artistService'
-import { Container, EmptyResults, PageWrapper } from '@/components/ui'
+import {
+	Container,
+	EmptyResults,
+	ExternalLink,
+	PageWrapper,
+} from '@/components/ui'
 import ImageWithSpinner from '@/components/ui/imageWithSpinner'
+import { ButtonBack } from '@/components/buttons'
 
 export default async function Page({
 	params,
@@ -17,7 +23,8 @@ export default async function Page({
 	}
 
 	return (
-		<PageWrapper pageName='artist-detail' hasContainer={false}>
+		<PageWrapper pageName='artist-detail' classes='pb-32' hasContainer={false}>
+			{/* IMAGES */}
 			<div className='flex'>
 				{[1, 2, 3].map((index) => (
 					<ImageWithSpinner
@@ -38,11 +45,158 @@ export default async function Page({
 					/>
 				))}
 			</div>
-			<Container classes='pt-8'>
-				<h1 className='heading-display text-secondary'>
-					{artist.businessName}
-				</h1>
-				<p>{artist.description}</p>
+			<Container classes='pt-8 grid grid-cols-12 gap-8'>
+				{/* MAIN CONTENT */}
+				<div className='col-span-12 md:col-span-9 space-y-8'>
+					<ButtonBack label='artists' />
+
+					{/* HEADER */}
+					<header className='space-y-4'>
+						<h1 className='heading-display text-secondary'>
+							{artist.businessName}
+						</h1>
+						<div className='flex flex-wrap items-center gap-4'>
+							<span className='pill-button border border-secondary'>
+								{artist.type}
+							</span>
+							{artist.is_featured && (
+								<span className='pill-button bg-tertiary text-primary'>
+									Featured Artist
+								</span>
+							)}
+						</div>
+					</header>
+
+					{/* DESCRIPTION */}
+					<section className='prose prose-lg max-w-none'>
+						<p className='text-lg leading-relaxed'>{artist.description}</p>
+					</section>
+
+					{/* SPECIALTIES */}
+					{artist.specialties && artist.specialties.length > 0 && (
+						<section className='space-y-4'>
+							<h2 className='heading-title'>Specialties</h2>
+							<div className='flex flex-wrap gap-2'>
+								{artist.specialties.map((specialty, index) => (
+									<span
+										key={index}
+										className='px-3 py-1 bg-accent-3 rounded-full text-sm'>
+										{specialty}
+									</span>
+								))}
+							</div>
+						</section>
+					)}
+
+					{/* PRICING */}
+					{artist.rates && artist.rates.length > 0 && (
+						<section className='space-y-4'>
+							<h2 className='heading-headline text-secondary'>Pricing</h2>
+							<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+								{artist.rates.map((rate, index) => (
+									<div
+										key={index}
+										className='p-4 border border-accent-1 rounded-lg bg-accent-2/50'>
+										<h3 className='font-semibold text-secondary capitalize'>
+											{rate.name.replace('_', ' ')}
+										</h3>
+										<p className='text-2xl font-bold text-tertiary'>
+											${rate.price}
+										</p>
+									</div>
+								))}
+							</div>
+						</section>
+					)}
+
+					{/* CONTACT INFORMATION */}
+					<section className='space-y-4'>
+						<h2 className='heading-headline'>Contact</h2>
+						<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+							{/* Artist Info */}
+							<div className='space-y-3'>
+								<h3 className='heading-title'>Artist Details</h3>
+								<div className='space-y-2'>
+									<p>{artist.artist_info.name}</p>
+									<p>
+										<a
+											href={`mailto:${artist.artist_info.email}`}
+											className='underlined-link'>
+											{artist.artist_info.email}
+										</a>
+									</p>
+									{artist.artist_info.phone && (
+										<p>
+											<a
+												href={`tel:${artist.artist_info.phone}`}
+												className='underlined-link'>
+												{artist.artist_info.phone}
+											</a>
+										</p>
+									)}
+									{artist.artist_info.website && (
+										<p>
+											<a
+												href={`https://${artist.artist_info.website}`}
+												target='_blank'
+												rel='noopener noreferrer'
+												className='underlined-link'>
+												{artist.artist_info.website}
+											</a>
+										</p>
+									)}
+								</div>
+							</div>
+
+							{/* Location & Business Info */}
+							<div className='space-y-3'>
+								<h3 className='heading-title'>Location & Studio</h3>
+								<div className='space-y-2'>
+									<address className='not-italic'>
+										{artist.location.street}
+										<br />
+										{artist.location.city}, {artist.location.state}{' '}
+										{artist.location.zip}
+									</address>
+									{artist.employees && (
+										<p>Team Size: {artist.employees} people</p>
+									)}
+									{artist.physical_stores && (
+										<p>Store Locations: {artist.physical_stores}</p>
+									)}
+								</div>
+							</div>
+						</div>
+					</section>
+
+					{/* SOCIAL MEDIA */}
+					{(artist.socials.instagram ||
+						artist.socials.facebook ||
+						artist.socials.bluesky ||
+						artist.socials.tiktok) && (
+						<section className='space-y-4 space-x-4'>
+							<h2 className='heading-title'>Follow</h2>
+
+							{Object.entries(artist.socials).map(([platform, url]) => {
+								return url ? (
+									<ExternalLink
+										key={platform}
+										href={url}
+										target='_blank'
+										rel='noopener noreferrer'>
+										{platform.charAt(0).toUpperCase() + platform.slice(1)}
+									</ExternalLink>
+								) : null
+							})}
+						</section>
+					)}
+				</div>
+
+				{/* SIDEBAR */}
+				<aside className='bg-accent-1 col-span-3'>
+					<h2 className='heading-subtitle text-secondary'>Related Artists</h2>
+					{/* TODO: Implement related artists list */}
+				</aside>
 			</Container>
 		</PageWrapper>
 	)
