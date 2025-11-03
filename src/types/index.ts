@@ -1,4 +1,5 @@
-import { Image } from './Image';
-import { NavLink } from './NavLink';
+import { ArtistType } from './ArtistType'
+import { ImageType } from './ImageType'
+import { NavLinkType } from './NavLinkType'
 
-export type { Image, NavLink };
+export type { ArtistType, ImageType, NavLinkType }

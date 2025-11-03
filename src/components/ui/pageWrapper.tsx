@@ -15,7 +15,7 @@ import { navLinks } from '@/data'
 import { Footer, Header } from '@/components/ui'
 
 type PageWrapperProps = {
-	variant: 'primary' | 'secondary' | 'tertiary' | 'accent'
+	variant?: 'primary' | 'secondary' | 'tertiary' | 'accent'
 	classes?: string
 	children?: React.ReactNode
 	hasContainer?: boolean
@@ -25,7 +25,7 @@ type PageWrapperProps = {
 
 export default function PageWrapper({
 	children,
-	variant,
+	variant = 'primary',
 	classes,
 	hasContainer = true,
 	hasFooter = true,

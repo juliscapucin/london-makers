@@ -3,7 +3,11 @@ import { Schema, model, models } from 'mongoose'
 const artistSchema = new Schema(
 	{
 		owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-		businessName: { type: String, required: true },
+		businessName: {
+			type: String,
+			required: true,
+			unique: [true, 'Business name already exists'],
+		},
 		artist_info: {
 			name: { type: String, required: true },
 			email: { type: String, required: true },

@@ -6,7 +6,7 @@ import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 
 import { MenuMobile, ThemeToggle } from '@/components/ui'
-import { NavLink as NavLinkType } from '@/types'
+import { NavLinkType } from '@/types'
 import { useEffect, useRef } from 'react'
 import { ButtonLogin } from '@/components/buttons'
 

@@ -1,3 +1,4 @@
+import EmptyResults from './emptyResults'
 import ExternalLink from './externalLink'
 import Header from './header'
 import Footer from './footer'
@@ -8,6 +9,7 @@ import ThemeToggle from './themeToggle'
 import Search from './search'
 
 export {
+	EmptyResults,
 	ExternalLink,
 	Header,
 	Footer,
