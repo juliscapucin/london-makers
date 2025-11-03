@@ -1,37 +1,10 @@
 @import 'tailwindcss';
 
-/* :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-} */
-
 :root {
 	--primary: #dad5c9;
-	/* --primary: #f5f3ea; */
 	--secondary: #1f1a04;
 	--tertiary: #641212;
-	--accent-1: #38312e;
-	/* --accent-1: #827c7a; */
+	--accent-1: #a2867b;
 	--accent-2: #fff2ec;
 	--accent-3: #dad5c9;
 	--accent-focus: #ff6e1f;
@@ -69,7 +42,7 @@ body {
 	--text-label-medium: 14px;
 	--text-label-small: 12px;
 
-	--max-width: 1800px;
+	--max-width-desktop: 1800px;
 
 	/* Heights based on Tailwind's spacing scale: --spacing: 0.25rem /* 4px */
 	--height-header: calc(var(--spacing) * 40) /* [40] 10rem = 160px */;

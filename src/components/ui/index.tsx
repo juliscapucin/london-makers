@@ -5,6 +5,7 @@ import Logo from './logo'
 import MenuMobile from './menuMobile'
 import PageWrapper from './pageWrapper'
 import ThemeToggle from './themeToggle'
+import Search from './search'
 
 export {
 	ExternalLink,
@@ -14,4 +15,5 @@ export {
 	MenuMobile,
 	PageWrapper,
 	ThemeToggle,
+	Search,
 }

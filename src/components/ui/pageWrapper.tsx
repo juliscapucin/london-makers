@@ -120,7 +120,7 @@ export default function PageWrapper({
 					{/* PAGE CONTENT BACKGROUND / MASK */}
 					<div
 						ref={pageContentRef}
-						className={`gsap-page-wrapper min-h-screen w-full pointer-events-auto ${
+						className={`gsap-page-wrapper min-h-screen w-full pointer-events-auto pt-[var(--height-header)] ${
 							pageWrapperStyles ? pageWrapperStyles : ''
 						}`}>
 						{/* PAGE CONTENT GRID */}
