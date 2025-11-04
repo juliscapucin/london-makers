@@ -4,18 +4,18 @@ const userSchema = new Schema(
 	{
 		// Better-auth creates these fields automatically
 		id: { type: String, required: true, unique: true }, // better-auth uses string IDs
-		name: { type: String, required: true }, // better-auth uses 'name', not 'username'
+		name: { type: String, required: true },
 		email: {
 			type: String,
 			required: [true, 'Email is required'],
 			unique: [true, 'Email already exists'],
 		},
-		emailVerified: { type: Boolean, default: false }, // better-auth field
-		image: { type: String }, // better-auth compatible
+		emailVerified: { type: Boolean, default: false },
+		image: { type: String },
 
-		// Your custom fields
+		// Custom fields
 		bookmarks: [{ type: Schema.Types.ObjectId, ref: 'Artist' }],
-		role: { type: String, default: 'user' }, // Add role field
+		role: { type: String, default: 'user' },
 	},
 	{
 		timestamps: true, // This will create createdAt/updatedAt
