@@ -1,15 +1,16 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
+import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 
+import { UserMenu } from '@/components'
 import { MenuMobile, ThemeToggle } from '@/components/ui'
-import { NavLinkType } from '@/types'
-import { useEffect, useRef } from 'react'
 import { ButtonLogin } from '@/components/buttons'
-import Link from 'next/link'
+import { NavLinkType } from '@/types'
 
 type HeaderProps = {
 	navLinks: NavLinkType[]
@@ -113,6 +114,8 @@ export default function Header({ navLinks }: HeaderProps) {
 
 				{/* LOGIN BUTTON */}
 				<ButtonLogin />
+
+				<UserMenu />
 
 				{/* THEME SWITCHER */}
 				<ThemeToggle variant='toggle' />

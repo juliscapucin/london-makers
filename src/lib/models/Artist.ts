@@ -2,7 +2,11 @@ import { Schema, model, models } from 'mongoose'
 
 const artistSchema = new Schema(
 	{
-		owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+		owner: {
+			type: String, // better-auth uses string IDs
+			ref: 'User',
+			required: true,
+		},
 		businessName: {
 			type: String,
 			required: true,

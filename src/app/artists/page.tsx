@@ -10,8 +10,6 @@ export default async function Page() {
 
 	const artists = await Artist.find({})
 
-	console.log(artists)
-
 	return (
 		<PageWrapper pageName='artists'>
 			<h1>Artists</h1>

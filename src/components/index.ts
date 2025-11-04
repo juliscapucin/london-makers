@@ -1,4 +1,5 @@
 import ArtistCard from './artistCard'
 import FeaturedArtists from './featuredArtists'
+import UserMenu from './userMenu'
 
-export { ArtistCard, FeaturedArtists }
+export { ArtistCard, FeaturedArtists, UserMenu }
