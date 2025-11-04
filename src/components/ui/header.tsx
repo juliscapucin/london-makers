@@ -68,7 +68,7 @@ export default function Header({ navLinks }: HeaderProps) {
 		<header className='pointer-events-none fixed top-0 right-0 left-0 z-50'>
 			<MenuMobile navLinks={navLinks} />
 			<nav
-				className='pointer-events-auto relative mx-auto h-header w-fit max-w-desktop items-center justify-between gap-32 overflow-clip px-8 py-2 transition-[background-color] duration-800 md:hidden lg:flex'
+				className='pointer-events-auto relative mx-auto h-header w-fit max-w-desktop items-center justify-between gap-32 px-8 py-2 transition-[background-color] duration-800 md:hidden lg:flex'
 				onMouseLeave={() => animateBottomBorder(pathname)}>
 				{/* NAVLINKS */}
 				<ul ref={navLinksRef} className='relative gap-8 lg:flex items-end '>
@@ -113,8 +113,6 @@ export default function Header({ navLinks }: HeaderProps) {
 				</ul>
 
 				{/* LOGIN BUTTON */}
-				<ButtonLogin />
-
 				<UserMenu />
 
 				{/* THEME SWITCHER */}

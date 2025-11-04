@@ -1,5 +1,7 @@
 'use client'
 
+import Image from 'next/image'
+
 import { authClient } from '@/lib/auth-client'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -36,10 +38,12 @@ export default function UserMenu() {
 			<button
 				onClick={() => setIsOpen(!isOpen)}
 				className='flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors'>
-				<img
+				<Image
 					src={session.user.image || '/default-avatar.png'}
 					alt={session.user.name || 'User'}
 					className='w-8 h-8 rounded-full'
+					width={32}
+					height={32}
 				/>
 				<span className='text-sm font-medium'>{session.user.name}</span>
 			</button>

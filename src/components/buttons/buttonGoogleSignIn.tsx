@@ -3,7 +3,7 @@
 import { authClient } from '@/lib/auth-client'
 import { useState } from 'react'
 
-export default function ButtonSignIn() {
+export default function ButtonGoogleSignIn() {
 	const { signIn } = authClient
 	const [isLoading, setIsLoading] = useState(false)
 
@@ -24,7 +24,7 @@ export default function ButtonSignIn() {
 		<button
 			onClick={handleGoogleSignIn}
 			disabled={isLoading}
-			className='flex items-center gap-3 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50'>
+			className='btn btn-ghost mx-auto'>
 			{isLoading ? (
 				<div className='w-5 h-5 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin' />
 			) : (

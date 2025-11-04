@@ -3,7 +3,7 @@ import ButtonBurger from './buttonBurger'
 import ButtonClose from './buttonClose'
 import ButtonLogin from './buttonLogin'
 import ButtonToggle from './buttonToggle'
-import ButtonSignIn from './buttonSignIn'
+import ButtonGoogleSignIn from './buttonGoogleSignIn'
 
 export {
 	ButtonBack,
@@ -11,5 +11,5 @@ export {
 	ButtonClose,
 	ButtonLogin,
 	ButtonToggle,
-	ButtonSignIn,
+	ButtonGoogleSignIn,
 }
