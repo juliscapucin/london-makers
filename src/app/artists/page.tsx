@@ -12,7 +12,7 @@ export default async function Page() {
 
 	return (
 		<PageWrapper pageName='artists'>
-			<h1>Artists</h1>
+			<h1 className='heading-display'>Artists</h1>
 			<ul>
 				{artists.map((artist: ArtistType) => {
 					return (

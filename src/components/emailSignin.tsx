@@ -77,9 +77,10 @@ export default function EmailSignin() {
 	}
 
 	return (
-		<div>
-			<div className='text-center mb-6'>
-				<h2 className='text-2xl font-bold text-gray-900 mb-2'>
+		<>
+			{/* Header */}
+			<header className='text-center mb-6'>
+				<h2 className='heading-headline mb-2'>
 					{mode === 'signin' ? 'Welcome Back' : 'Create Account'}
 				</h2>
 				<p>
@@ -87,10 +88,10 @@ export default function EmailSignin() {
 						? 'Sign in to your account'
 						: 'Join the London Makers community'}
 				</p>
-			</div>
+			</header>
 
 			{error && (
-				<div className='mb-4 p-3 bg-red-50 border border-red-200 rounded-lg'>
+				<div className='mb-4 p-3'>
 					<p className='text-sm text-red-600'>{error}</p>
 				</div>
 			)}
@@ -98,9 +99,7 @@ export default function EmailSignin() {
 			<form onSubmit={handleSubmit} className='space-y-4'>
 				{mode === 'signup' && (
 					<div>
-						<label
-							htmlFor='name'
-							className='block text-sm font-medium text-gray-700 mb-1'>
+						<label htmlFor='name' className='block mb-1'>
 							Full Name
 						</label>
 						<input
@@ -111,15 +110,13 @@ export default function EmailSignin() {
 							placeholder='Enter your full name'
 							required={mode === 'signup'}
 							disabled={isLoading}
-							className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed'
+							className='form-input w-full'
 						/>
 					</div>
 				)}
 
 				<div>
-					<label
-						htmlFor='email'
-						className='block text-sm font-medium text-gray-700 mb-1'>
+					<label htmlFor='email' className='block mb-1'>
 						Email Address
 					</label>
 					<input
@@ -130,7 +127,7 @@ export default function EmailSignin() {
 						placeholder='Enter your email'
 						required
 						disabled={isLoading}
-						className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed'
+						className='form-input w-full'
 					/>
 				</div>
 
@@ -153,7 +150,7 @@ export default function EmailSignin() {
 						required
 						disabled={isLoading}
 						minLength={mode === 'signup' ? 6 : undefined}
-						className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed'
+						className='form-input w-full'
 					/>
 				</div>
 
@@ -172,7 +169,7 @@ export default function EmailSignin() {
 							placeholder='Confirm your password'
 							required={mode === 'signup'}
 							disabled={isLoading}
-							className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed'
+							className='form-input w-full'
 						/>
 					</div>
 				)}
@@ -180,10 +177,11 @@ export default function EmailSignin() {
 				<button
 					type='submit'
 					disabled={isLoading}
-					className='btn btn-ghost focus:outline-none mx-auto'>
+					className='btn btn-secondary focus:outline-none mx-auto'>
 					{isLoading ? (
+						//* LOADING SPINNER *//
 						<div className='flex items-center justify-center gap-2'>
-							<div className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' />
+							<div className='w-4 h-4 border-2 border-secondary border-t-transparent rounded-full animate-spin' />
 							{mode === 'signin' ? 'Signing in...' : 'Creating account...'}
 						</div>
 					) : mode === 'signin' ? (
@@ -195,14 +193,14 @@ export default function EmailSignin() {
 			</form>
 
 			<div className='mt-6 text-center'>
-				<p className='text-sm text-gray-600'>
+				<p>
 					{mode === 'signin'
 						? "Don't have an account?"
 						: 'Already have an account?'}{' '}
 					<button
 						onClick={toggleMode}
 						disabled={isLoading}
-						className='font-medium text-blue-600 hover:text-blue-500 focus:outline-none focus:underline disabled:opacity-50'>
+						className='underlined-link'>
 						{mode === 'signin' ? 'Sign up' : 'Sign in'}
 					</button>
 				</p>
@@ -216,11 +214,11 @@ export default function EmailSignin() {
 							alert('Forgot password functionality coming soon!')
 						}}
 						disabled={isLoading}
-						className='text-sm text-gray-500 hover:text-gray-700 focus:outline-none focus:underline disabled:opacity-50'>
+						className='underlined-link'>
 						Forgot your password?
 					</button>
 				</div>
 			)}
-		</div>
+		</>
 	)
 }

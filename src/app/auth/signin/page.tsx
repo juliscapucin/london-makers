@@ -4,12 +4,11 @@ import { EmailSignin } from '@/components'
 
 export default function SignInPage() {
 	return (
-		<PageWrapper
-			pageName='signin'
-			classes='min-h-screen flex items-center justify-center'>
-			<div className='bg-accent-2 p-8 rounded-lg'>
+		<PageWrapper pageName='signin'>
+			<div className='max-w-lg mx-auto'>
 				<div className='space-y-4'>
 					<EmailSignin />
+					<span className='heading-title text-center mx-auto block'>OR</span>
 					<ButtonGoogleSignIn />
 
 					<div className='text-center'>

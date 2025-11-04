@@ -25,8 +25,9 @@ export default function ButtonGoogleSignIn() {
 			onClick={handleGoogleSignIn}
 			disabled={isLoading}
 			className='btn btn-ghost mx-auto'>
+			{/* SPINNER */}
 			{isLoading ? (
-				<div className='w-5 h-5 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin' />
+				<div className='w-5 h-5 border-2 border-secondary border-t-transparent rounded-full animate-spin' />
 			) : (
 				<svg className='w-5 h-5' viewBox='0 0 24 24'>
 					<path
@@ -47,7 +48,7 @@ export default function ButtonGoogleSignIn() {
 					/>
 				</svg>
 			)}
-			{isLoading ? 'Signing in...' : 'Continue with Google'}
+			{isLoading ? 'Signing in...' : 'Sign in with Google'}
 		</button>
 	)
 }

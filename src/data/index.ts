@@ -1,6 +1,8 @@
 export const navLinks = [
 	{ label: 'Start', slug: '/' },
-	{ label: 'Artists', slug: '/artists' },
+	{ label: 'Artists', slug: 'artists' },
+	{ label: 'Add Artist', slug: 'artists/add' },
+	{ label: 'Saved Artists', slug: 'artists/saved' },
 ]
 
 export const socialLinks = [
