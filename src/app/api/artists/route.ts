@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import Artist from '@/lib/models/Artist'
-import { connectToDatabase } from '@/lib/services/database'
 import { UserService } from '@/lib/services/userService'
 import mongoose from 'mongoose'
 
@@ -41,7 +40,7 @@ export async function POST(req: Request) {
 		// Check if user has admin role
 		if (!user || user.role !== 'admin') {
 			return NextResponse.json(
-				{ error: 'Admin access requireds' },
+				{ error: 'Admin access required' },
 				{ status: 403 }
 			)
 		}

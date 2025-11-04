@@ -19,7 +19,7 @@ const userSchema = new Schema(
 	},
 	{
 		timestamps: true, // This will create createdAt/updatedAt
-		collection: 'users', // Make sure it uses the same collection as better-auth
+		collection: 'user', // Make sure it uses the same collection as better-auth
 	}
 )
 

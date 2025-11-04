@@ -21,10 +21,6 @@ export default async function Page() {
 	const user = await UserService.getUserById(session.user.id)
 	console.log('Found user:', user)
 
-	// Also try getting all users to see what's in the database
-	const allUsers = await UserService.getAllUsers(session.user.id, 1, 5)
-	console.log('All users in DB:', allUsers)
-
 	if (!user || Array.isArray(user) || user.role !== 'admin') {
 		redirect('/?error=access-denied')
 	}
