@@ -10,5 +10,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-	matcher: ['/dashboard', '/artists/add', '/artists/saved', '/messages'],
+	matcher: ['/dashboard', '/artists/saved', '/messages'],
 }

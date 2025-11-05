@@ -72,8 +72,6 @@ export class UserService {
 		try {
 			await connectToDatabase()
 
-			console.log('User collection:', User.collection.name)
-
 			const user = await User.findOne({ _id: id }).lean<UserType>().exec()
 
 			return user ?? null

@@ -23,7 +23,7 @@ const artistSchema = new Schema(
 		location: {
 			street: { type: String, required: true },
 			city: { type: String, required: true },
-			state: { type: String, required: true },
+			state: { type: String, required: false },
 			zip: { type: String, required: true },
 		},
 		employees: { type: Number, required: false },

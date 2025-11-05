@@ -1,27 +1,14 @@
 import { redirect } from 'next/navigation'
-import { headers } from 'next/headers'
 
-import { auth } from '@/lib/auth'
-import { UserService } from '@/lib/services/userService'
 import { AddArtistForm } from '@/components/forms'
 import { PageWrapper, Container } from '@/components/ui'
 
+import { getUserSession } from '@/lib/getUserSession'
+
 export default async function Page() {
-	// Check authentication and admin role
-	const session = await auth.api.getSession({ headers: await headers() })
-	if (!session) redirect('/sign-in')
+	const { user, session } = await getUserSession()
 
-	if (!session?.user) {
-		redirect('/auth/signin?callbackUrl=/artists/add')
-	}
-
-	console.log('Session user:', JSON.stringify(session.user, null, 2))
-	console.log('Looking for user with ID:', session.user.id)
-
-	const user = await UserService.getUserById(session.user.id)
-	console.log('Found user:', user)
-
-	if (!user || Array.isArray(user) || user.role !== 'admin') {
+	if (!user || !session || user.role !== 'admin') {
 		redirect('/?error=access-denied')
 	}
 
@@ -33,15 +20,13 @@ export default async function Page() {
 						<h1 className='heading-display text-secondary mb-4'>
 							Add New Artist
 						</h1>
-						<p className='text-paragraph text-accent-1'>
+						<p className='text-paragraph text-accent-3'>
 							Fill out the form below to add a new artist to the London Makers
 							directory. All fields marked with * are required.
 						</p>
 					</header>
 
-					<AddArtistForm
-						userId={session.user.id || session.user.id?.toString() || ''}
-					/>
+					<AddArtistForm />
 				</div>
 			</Container>
 		</PageWrapper>

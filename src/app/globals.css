@@ -8,6 +8,16 @@
 	--accent-2: #fff2ec;
 	--accent-3: #dad5c9;
 	--accent-focus: #ff6e1f;
+
+	.dark {
+		--primary: #1f1a04;
+		--secondary: #dad5c9;
+		--tertiary: #ffbfa3;
+		--accent-1: #4e4545;
+		--accent-2: #746767;
+		--accent-3: #a79595;
+		--accent-focus: #ff6e1f;
+	}
 }
 
 @theme inline {

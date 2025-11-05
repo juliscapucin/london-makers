@@ -152,7 +152,7 @@ export default async function Page({
 										<address className='not-italic'>
 											{artist.location.street}
 											<br />
-											{artist.location.city}, {artist.location.state}{' '}
+											{artist.location.city}, {artist.location.state || ''}{' '}
 											{artist.location.zip}
 										</address>
 										{artist.employees && (
@@ -167,10 +167,10 @@ export default async function Page({
 						</section>
 
 						{/* SOCIAL MEDIA */}
-						{(artist.socials.instagram ||
-							artist.socials.facebook ||
-							artist.socials.bluesky ||
-							artist.socials.tiktok) && (
+						{(artist.socials?.instagram ||
+							artist.socials?.facebook ||
+							artist.socials?.bluesky ||
+							artist.socials?.tiktok) && (
 							<section className='space-y-4 space-x-4'>
 								<h2 className='heading-title'>Follow</h2>
 
