@@ -28,7 +28,7 @@ export type ArtistType = {
 		price: number
 	}>
 	specialties: string[]
-	images: ImageType[]
+	images: string[]
 	is_featured: boolean
 	createdAt: Date
 	updatedAt: Date

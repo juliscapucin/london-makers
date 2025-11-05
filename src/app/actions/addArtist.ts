@@ -165,7 +165,7 @@ export async function addArtist(
 
 				// Upload to Cloudinary
 				const uploadResult = await cloudinary.uploader.upload(base64Image, {
-					folder: 'artists',
+					folder: 'london-makers/artists',
 					use_filename: true,
 					unique_filename: true,
 					resource_type: 'image',

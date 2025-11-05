@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { EmptyResults } from '@/components/ui'
-import { ImageType } from '@/types'
 
 // Extracted Spinner component for better separation
 function LoadingSpinner({ className = '', bgColor = 'bg-accent-3' }) {
@@ -22,9 +21,14 @@ function LoadingSpinner({ className = '', bgColor = 'bg-accent-3' }) {
 }
 
 type ImageWithSpinnerProps = {
-	imageSrc: ImageType
+	imageSrc: {
+		url: string
+		alt?: string
+		width?: number
+		height?: number
+	}
 	sizes: string
-	className?: string
+	containerClassName?: string
 	imageClassName?: string
 	spinnerClassName?: string
 	bgColor?: string
@@ -39,7 +43,7 @@ type ImageWithSpinnerProps = {
 export default function ImageWithSpinner({
 	imageSrc,
 	sizes,
-	className = '',
+	containerClassName = '',
 	imageClassName = '',
 	spinnerClassName = '',
 	bgColor = 'bg-accent-3',
@@ -63,7 +67,7 @@ export default function ImageWithSpinner({
 
 	return (
 		<div
-			className={`${fill ? 'relative h-full w-full' : ''} ${className}`.trim()}
+			className={containerClassName}
 			id={id}
 			role='img'
 			aria-busy={isLoading}
