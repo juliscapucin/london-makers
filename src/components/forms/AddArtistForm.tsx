@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useActionState, useRef } from 'react'
+import { useState, useActionState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
 import { addArtist } from '@/app/actions/addArtist'
+import { useNotifications } from '@/contexts'
 
 import { gsap } from 'gsap'
 import { useGSAP } from '@gsap/react'
@@ -37,10 +38,9 @@ function RemoveButton({ onClick }: { onClick: () => void }) {
 
 export default function AddArtistForm() {
 	const router = useRouter()
+	const { showSuccess, showError } = useNotifications()
 
 	const [state, formAction, isPending] = useActionState(addArtist, null)
-	const successRef = useRef<HTMLDivElement>(null)
-	const errorRef = useRef<HTMLDivElement>(null)
 
 	const [formData, setFormData] = useState<FormData>({
 		rates: [{ name: '', price: 0 }],
@@ -76,60 +76,31 @@ export default function AddArtistForm() {
 		}))
 	}
 
-	// Handle successful / error submission
-	useGSAP(() => {
+	// Handle form state changes
+	useEffect(() => {
 		if (state?.success && state?.artistId) {
-			gsap.to(successRef.current, {
-				y: 0,
-				duration: 0.5,
-				ease: 'power2.out',
-				onComplete: () => {
-					if (state?.artistId) router.push(`/artists/${state.artistId}`)
-				},
-			})
+			showSuccess('Artist has been added successfully!', 'Success', 3000)
+
+			// Redirect after a short delay
+			setTimeout(() => {
+				router.push(`/artists/${state.artistId}`)
+			}, 1500)
 		}
 
-		// Handle error state
 		if (state?.error) {
-			const tl = gsap.timeline()
-			tl.to(errorRef.current, { y: 0, duration: 0.5, ease: 'power2.out' }).to(
-				errorRef.current,
-				{
-					yPercent: -150,
-					duration: 0.5,
-					ease: 'power2.in',
-					delay: 3,
-				}
-			)
+			showError(state.error, 'Error Creating Artist', 8000)
 		}
-	}, [state?.success, state?.error, state?.artistId, router])
-
-	// SUCCESS MESSAGE
-	if (state?.success) {
-		return (
-			<div className='text-center py-12'>
-				<div className='bg-accent-1 rounded-lg p-6 max-w-md mx-auto'>
-					<h2 className='heading-display mb-2'>Success!</h2>
-					<p className='heading-title'>Artist has been added successfully.</p>
-					<p className='mt-2'>Redirecting...</p>
-				</div>
-			</div>
-		)
-	}
+	}, [
+		state?.success,
+		state?.error,
+		state?.artistId,
+		router,
+		showSuccess,
+		showError,
+	])
 
 	return (
 		<form action={formAction} className='space-y-8 max-w-4xl'>
-			{/* ERROR MESSAGE */}
-			{state?.error && (
-				<div className='fixed inset-0 flex items-start justify-end'>
-					<div
-						ref={errorRef}
-						className='rounded-lg bg-secondary text-primary p-4'>
-						<p>{state.error}</p>
-					</div>
-				</div>
-			)}
-
 			{/* BASIC INFORMATION */}
 			<section className='space-y-6'>
 				<h2 className='heading-title'>Basic Information</h2>
