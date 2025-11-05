@@ -6,18 +6,31 @@ import { useRouter } from 'next/navigation'
 import { addArtist } from '@/app/actions/addArtist'
 import { useNotifications } from '@/contexts'
 
-import { gsap } from 'gsap'
-import { useGSAP } from '@gsap/react'
-
-type Rate = {
-	name: string
-	price: number
-}
-
-type FormData = {
-	rates: Rate[]
+type FormValues = {
+	businessName: string
+	artistName: string
+	email: string
+	phone: string
+	website: string
+	type: string
+	description: string
+	street: string
+	city: string
+	state: string
+	zip: string
+	employees: string
+	physicalStores: string
+	instagram: string
+	facebook: string
+	bluesky: string
+	tiktok: string
+	rates: {
+		name: string
+		price: number
+	}[]
 	specialties: string[]
 	images: string[]
+	isFeatured: boolean
 }
 
 function AddButton({ onClick, label }: { onClick: () => void; label: string }) {
@@ -42,35 +55,53 @@ export default function AddArtistForm() {
 
 	const [state, formAction, isPending] = useActionState(addArtist, null)
 
-	const [formData, setFormData] = useState<FormData>({
+	const [formValues, setFormValues] = useState<FormValues>({
+		businessName: '',
+		artistName: '',
+		email: '',
+		phone: '',
+		website: '',
+		type: '',
+		description: '',
+		street: '',
+		city: '',
+		state: '',
+		zip: '',
+		employees: '',
+		physicalStores: '',
+		instagram: '',
+		facebook: '',
+		bluesky: '',
+		tiktok: '',
 		rates: [{ name: '', price: 0 }],
 		specialties: [''],
 		images: [''],
+		isFeatured: false,
 	})
 
 	const addRate = () => {
-		setFormData((prev) => ({
+		setFormValues((prev) => ({
 			...prev,
 			rates: [...prev.rates, { name: '', price: 0 }],
 		}))
 	}
 
 	const removeRate = (index: number) => {
-		setFormData((prev) => ({
+		setFormValues((prev) => ({
 			...prev,
 			rates: prev.rates.filter((_, i) => i !== index),
 		}))
 	}
 
 	const addArrayItem = (field: 'specialties' | 'images') => {
-		setFormData((prev) => ({
+		setFormValues((prev) => ({
 			...prev,
 			[field]: [...prev[field], ''],
 		}))
 	}
 
 	const removeArrayItem = (field: 'specialties' | 'images', index: number) => {
-		setFormData((prev) => ({
+		setFormValues((prev) => ({
 			...prev,
 			[field]: prev[field].filter((_, i) => i !== index),
 		}))
@@ -79,14 +110,13 @@ export default function AddArtistForm() {
 	// Handle form state changes
 	useEffect(() => {
 		if (state?.success && state?.artistId) {
-			showSuccess('Artist has been added successfully!', 'Success', 3000)
+			showSuccess('Artist has been added successfully!', 'Success', 5000)
 
 			// Redirect after a short delay
 			setTimeout(() => {
 				router.push(`/artists/${state.artistId}`)
 			}, 1500)
 		}
-
 		if (state?.error) {
 			showError(state.error, 'Error Creating Artist', 8000)
 		}
@@ -114,6 +144,13 @@ export default function AddArtistForm() {
 							type='text'
 							id='businessName'
 							name='businessName'
+							value={formValues.businessName}
+							onChange={(e) =>
+								setFormValues((prev) => ({
+									...prev,
+									businessName: e.target.value,
+								}))
+							}
 							required
 							className='form-input w-full'
 							placeholder='e.g., Smith Pottery Studio'
@@ -128,6 +165,13 @@ export default function AddArtistForm() {
 							id='type'
 							name='type'
 							required
+							value={formValues.type}
+							onChange={(e) =>
+								setFormValues((prev) => ({
+									...prev,
+									type: e.target.value,
+								}))
+							}
 							className='form-input w-full'>
 							<option value=''>Select Type</option>
 							<option value='Visual Artist'>Visual Artist</option>
@@ -152,6 +196,13 @@ export default function AddArtistForm() {
 						id='description'
 						name='description'
 						required
+						value={formValues.description}
+						onChange={(e) =>
+							setFormValues((prev) => ({
+								...prev,
+								description: e.target.value,
+							}))
+						}
 						rows={4}
 						className='form-input w-full resize-vertical'
 						placeholder="Describe the artist's work, style, and background..."
@@ -173,6 +224,13 @@ export default function AddArtistForm() {
 							id='artistName'
 							name='artistName'
 							required
+							value={formValues.artistName}
+							onChange={(e) =>
+								setFormValues((prev) => ({
+									...prev,
+									artistName: e.target.value,
+								}))
+							}
 							className='form-input w-full'
 							placeholder='e.g., John Smith'
 						/>
@@ -186,6 +244,13 @@ export default function AddArtistForm() {
 							type='email'
 							id='email'
 							name='email'
+							value={formValues.email}
+							onChange={(e) =>
+								setFormValues((prev) => ({
+									...prev,
+									email: e.target.value,
+								}))
+							}
 							required
 							className='form-input w-full'
 							placeholder='artist@example.com'
@@ -200,6 +265,13 @@ export default function AddArtistForm() {
 							type='tel'
 							id='phone'
 							name='phone'
+							value={formValues.phone}
+							onChange={(e) =>
+								setFormValues((prev) => ({
+									...prev,
+									phone: e.target.value,
+								}))
+							}
 							className='form-input w-full'
 							placeholder='(555) 123-4567'
 						/>
@@ -213,6 +285,13 @@ export default function AddArtistForm() {
 							type='url'
 							id='website'
 							name='website'
+							value={formValues.website}
+							onChange={(e) =>
+								setFormValues((prev) => ({
+									...prev,
+									website: e.target.value,
+								}))
+							}
 							className='form-input w-full'
 							placeholder='https://www.example.com'
 						/>
@@ -234,6 +313,13 @@ export default function AddArtistForm() {
 							id='street'
 							name='street'
 							required
+							value={formValues.street}
+							onChange={(e) =>
+								setFormValues((prev) => ({
+									...prev,
+									street: e.target.value,
+								}))
+							}
 							className='form-input w-full'
 							placeholder='123 Art Street'
 						/>
@@ -248,6 +334,13 @@ export default function AddArtistForm() {
 							id='city'
 							name='city'
 							required
+							value={formValues.city}
+							onChange={(e) =>
+								setFormValues((prev) => ({
+									...prev,
+									city: e.target.value,
+								}))
+							}
 							className='form-input w-full'
 							placeholder='London'
 						/>
@@ -275,6 +368,13 @@ export default function AddArtistForm() {
 							id='zip'
 							name='zip'
 							required
+							value={formValues.zip}
+							onChange={(e) =>
+								setFormValues((prev) => ({
+									...prev,
+									zip: e.target.value,
+								}))
+							}
 							className='form-input w-full'
 							placeholder='SW1A 1AA'
 						/>
@@ -384,7 +484,7 @@ export default function AddArtistForm() {
 				</div>
 
 				<div className='space-y-4'>
-					{formData.rates.map((rate, index) => (
+					{formValues.rates.map((rate, index) => (
 						<div key={index} className='flex gap-4 items-end'>
 							<div className='flex-1'>
 								<label className='block text-label mb-1' htmlFor='rateName'>
@@ -395,6 +495,15 @@ export default function AddArtistForm() {
 									name='rateName'
 									className='form-input w-full'
 									placeholder='e.g., Custom Portrait, Workshop Session'
+									value={rate.name}
+									onChange={(e) => {
+										const newRates = [...formValues.rates]
+										newRates[index].name = e.target.value
+										setFormValues((prev) => ({
+											...prev,
+											rates: newRates,
+										}))
+									}}
 								/>
 							</div>
 							<div className='w-32'>
@@ -408,9 +517,18 @@ export default function AddArtistForm() {
 									step='0.01'
 									className='form-input w-full'
 									placeholder='0.00'
+									value={rate.price}
+									onChange={(e) => {
+										const newRates = [...formValues.rates]
+										newRates[index].price = parseFloat(e.target.value)
+										setFormValues((prev) => ({
+											...prev,
+											rates: newRates,
+										}))
+									}}
 								/>
 							</div>
-							{formData.rates.length > 1 && (
+							{formValues.rates.length > 1 && (
 								<RemoveButton onClick={() => removeRate(index)} />
 							)}
 						</div>
@@ -429,15 +547,24 @@ export default function AddArtistForm() {
 				</div>
 
 				<div className='space-y-3'>
-					{formData.specialties.map((specialty, index) => (
+					{formValues.specialties.map((specialty, index) => (
 						<div key={index} className='flex gap-4 items-center'>
 							<input
 								type='text'
 								name='specialties'
 								className='form-input flex-1'
 								placeholder='e.g., Portrait Photography, Ceramic Bowls'
+								value={specialty}
+								onChange={(e) => {
+									const newSpecialties = [...formValues.specialties]
+									newSpecialties[index] = e.target.value
+									setFormValues((prev) => ({
+										...prev,
+										specialties: newSpecialties,
+									}))
+								}}
 							/>
-							{formData.specialties.length > 1 && (
+							{formValues.specialties.length > 1 && (
 								<RemoveButton
 									onClick={() => removeArrayItem('specialties', index)}
 								/>
@@ -450,20 +577,21 @@ export default function AddArtistForm() {
 			{/* IMAGES */}
 			<section className='space-y-6'>
 				<div className='flex items-center justify-between'>
-					<h2 className='heading-title'>Images</h2>
+					<h2 className='heading-title'>Images (max 5)</h2>
 					<AddButton label='Add Image' onClick={() => addArrayItem('images')} />
 				</div>
 
 				<div className='space-y-3'>
-					{formData.images.map((image, index) => (
+					{formValues.images.map((image, index) => (
 						<div key={index} className='flex gap-4 items-center'>
 							<input
-								type='url'
+								type='file'
+								id={`image-${index}`}
 								name='images'
 								className='form-input flex-1'
 								placeholder='https://example.com/image.jpg'
 							/>
-							{formData.images.length > 1 && (
+							{formValues.images.length > 1 && (
 								<RemoveButton
 									onClick={() => removeArrayItem('images', index)}
 								/>

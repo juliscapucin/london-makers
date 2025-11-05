@@ -13,7 +13,6 @@ export default function Error({ error }: { error: Error }) {
 			<h1 className='heading-display block'>Something went wrong</h1>
 			<p className='text-pretty mt-2'>{error.message}. Please try again.</p>
 			<div>
-				<span className='text-link-lg mr-2'>{`[->]`}</span>
 				<Link className='underlined-link text-link-lg mt-16' href='/'>
 					Start Again
 				</Link>
