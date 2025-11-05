@@ -1,9 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useActionState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 
-import { addArtist } from '@/app/actions'
+import { addArtist } from '@/app/actions/addArtist'
+
+import { gsap } from 'gsap'
+import { useGSAP } from '@gsap/react'
 
 type Rate = {
 	name: string
@@ -11,27 +14,9 @@ type Rate = {
 }
 
 type FormData = {
-	businessName: string
-	artistName: string
-	email: string
-	phone: string
-	website: string
-	type: string
-	description: string
-	street: string
-	city: string
-	state: string
-	zip: string
-	employees: number
-	physicalStores: number
-	instagram: string
-	facebook: string
-	bluesky: string
-	tiktok: string
 	rates: Rate[]
 	specialties: string[]
 	images: string[]
-	isFeatured: boolean
 }
 
 function AddButton({ onClick, label }: { onClick: () => void; label: string }) {
@@ -52,32 +37,15 @@ function RemoveButton({ onClick }: { onClick: () => void }) {
 
 export default function AddArtistForm() {
 	const router = useRouter()
-	const [isLoading, setIsLoading] = useState(false)
-	const [error, setError] = useState('')
-	const [success, setSuccess] = useState(false)
+
+	const [state, formAction, isPending] = useActionState(addArtist, null)
+	const successRef = useRef<HTMLDivElement>(null)
+	const errorRef = useRef<HTMLDivElement>(null)
 
 	const [formData, setFormData] = useState<FormData>({
-		businessName: '',
-		artistName: '',
-		email: '',
-		phone: '',
-		website: '',
-		type: '',
-		description: '',
-		street: '',
-		city: '',
-		state: '',
-		zip: '',
-		employees: 0,
-		physicalStores: 0,
-		instagram: '',
-		facebook: '',
-		bluesky: '',
-		tiktok: '',
 		rates: [{ name: '', price: 0 }],
 		specialties: [''],
 		images: [''],
-		isFeatured: false,
 	})
 
 	const addRate = () => {
@@ -108,8 +76,36 @@ export default function AddArtistForm() {
 		}))
 	}
 
+	// Handle successful / error submission
+	useGSAP(() => {
+		if (state?.success && state?.artistId) {
+			gsap.to(successRef.current, {
+				y: 0,
+				duration: 0.5,
+				ease: 'power2.out',
+				onComplete: () => {
+					if (state?.artistId) router.push(`/artists/${state.artistId}`)
+				},
+			})
+		}
+
+		// Handle error state
+		if (state?.error) {
+			const tl = gsap.timeline()
+			tl.to(errorRef.current, { y: 0, duration: 0.5, ease: 'power2.out' }).to(
+				errorRef.current,
+				{
+					yPercent: -150,
+					duration: 0.5,
+					ease: 'power2.in',
+					delay: 3,
+				}
+			)
+		}
+	}, [state?.success, state?.error, state?.artistId, router])
+
 	// SUCCESS MESSAGE
-	if (success) {
+	if (state?.success) {
 		return (
 			<div className='text-center py-12'>
 				<div className='bg-accent-1 rounded-lg p-6 max-w-md mx-auto'>
@@ -122,11 +118,15 @@ export default function AddArtistForm() {
 	}
 
 	return (
-		<form action={addArtist} className='space-y-8 max-w-4xl'>
+		<form action={formAction} className='space-y-8 max-w-4xl'>
 			{/* ERROR MESSAGE */}
-			{error && (
-				<div className='bg-accent-3 rounded-lg p-4'>
-					<p className='heading-display'>{error}</p>
+			{state?.error && (
+				<div className='fixed inset-0 flex items-start justify-end'>
+					<div
+						ref={errorRef}
+						className='rounded-lg bg-secondary text-primary p-4'>
+						<p>{state.error}</p>
+					</div>
 				</div>
 			)}
 
@@ -523,14 +523,14 @@ export default function AddArtistForm() {
 					type='button'
 					onClick={() => router.back()}
 					className='btn btn-ghost'
-					disabled={isLoading}>
+					disabled={isPending}>
 					Cancel
 				</button>
 				<button
 					type='submit'
 					className='btn btn-secondary'
-					disabled={isLoading}>
-					{isLoading ? (
+					disabled={isPending}>
+					{isPending ? (
 						<>
 							<div className='w-4 h-4 border-2 border-secondary border-t-transparent rounded-full animate-spin' />
 							Creating Artist...

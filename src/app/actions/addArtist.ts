@@ -1,20 +1,26 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 
 import Artist from '@/lib/models/Artist'
 import { getUserSession } from '@/lib/getUserSession'
 import { connectToDatabase } from '@/lib/services/database'
 
-async function addArtist(formData: FormData) {
+export type ActionState = {
+	success: boolean
+	error?: string
+	artistId?: string
+}
+
+export async function addArtist(
+	currentState: ActionState | null,
+	formData: FormData
+): Promise<ActionState> {
 	try {
 		const { user, session } = await getUserSession()
 		if (!user || !session || user.role !== 'admin') {
-			redirect('/?error=access-denied')
+			return { success: false, error: 'Admin access required' }
 		}
-
-		console.log('Form Data received:', formData)
 
 		// Parse rates from form data
 		const rates: Array<{ name: string; price: number }> = []
@@ -44,39 +50,53 @@ async function addArtist(formData: FormData) {
 			.map((i) => i.toString())
 			.filter((i) => i.trim())
 
+		// Validate required fields
+		const businessName = formData.get('businessName')?.toString().trim()
+		const artistName = formData.get('artistName')?.toString().trim()
+		const email = formData.get('email')?.toString().trim()
+
+		if (!businessName || !artistName || !email) {
+			return {
+				success: false,
+				error: 'One or more required fields are missing',
+			}
+		}
+
 		// Filter out empty values
 		const cleanedData = {
 			owner: session.user.id,
 			businessName: formData.get('businessName'),
 			artist_info: {
-				name: formData.get('artistName'),
-				email: formData.get('email'),
+				name: artistName,
+				email,
 				phone: formData.get('phone') || undefined,
 				website: formData.get('website') || undefined,
 			},
-			type: formData.get('type'),
-			description: formData.get('description'),
+			type: formData.get('type')?.toString().trim(),
+			description: formData.get('description')?.toString().trim(),
 			location: {
-				street: formData.get('street'),
-				city: formData.get('city'),
-				state: formData.get('state'),
-				zip: formData.get('zip'),
+				street: formData.get('street')?.toString().trim(),
+				city: formData.get('city')?.toString().trim(),
+				state: formData.get('state')?.toString().trim(),
+				zip: formData.get('zip')?.toString().trim(),
 			},
-			employees: formData.get('employees') || undefined,
-			physical_stores: formData.get('physicalStores') || undefined,
+			employees: formData.get('employees')
+				? Number(formData.get('employees'))
+				: undefined,
+			physical_stores: formData.get('physicalStores')
+				? Number(formData.get('physicalStores'))
+				: undefined,
 			socials: {
-				instagram: formData.get('instagram') || undefined,
-				facebook: formData.get('facebook') || undefined,
-				bluesky: formData.get('bluesky') || undefined,
-				tiktok: formData.get('tiktok') || undefined,
+				instagram: formData.get('instagram')?.toString().trim() || undefined,
+				facebook: formData.get('facebook')?.toString().trim() || undefined,
+				bluesky: formData.get('bluesky')?.toString().trim() || undefined,
+				tiktok: formData.get('tiktok')?.toString().trim() || undefined,
 			},
 			rates,
 			specialties,
 			images,
-			is_featured: formData.get('isFeatured') === 'on' ? true : false,
+			is_featured: formData.get('isFeatured') === 'on',
 		}
-
-		console.log('Cleaned data:', cleanedData)
 
 		// Ensure database connection before saving
 		await connectToDatabase()
@@ -85,15 +105,15 @@ async function addArtist(formData: FormData) {
 		const newArtist = new Artist(cleanedData)
 		await newArtist.save()
 
-		// Revalidate the artists listing page
-		// revalidatePath('/artists', 'layout')
+		// Revalidate the artists page
+		revalidatePath('/artists')
 
-		console.log('Artist created successfully:', newArtist._id)
+		return { success: true, artistId: newArtist._id.toString() }
 	} catch (error) {
-		console.error('Database connection error:', error)
-		redirect('/artists')
+		console.error('Error creating artist:', error)
+		return {
+			success: false,
+			error: error instanceof Error ? error.message : 'Failed to create artist',
+		}
 	}
-	redirect(`/dashboard`)
 }
-
-export default addArtist

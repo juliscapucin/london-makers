@@ -1,3 +1,3 @@
-import addArtist from './addArtist'
+import { addArtist } from './addArtist'
 
 export { addArtist }
