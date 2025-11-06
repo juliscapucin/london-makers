@@ -3,8 +3,7 @@
 import { useState, useActionState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
-import cloudinary from '@/lib/cloudinaryConfig'
-import { addArtist, updateArtist } from '@/app/actions'
+import { saveArtist } from '@/app/actions'
 import { useNotifications } from '@/contexts'
 import Image from 'next/image'
 
@@ -60,10 +59,7 @@ export default function ArtistForm({
 	const router = useRouter()
 	const { showSuccess, showError, showInfo } = useNotifications()
 
-	const [state, formAction, isPending] = useActionState(
-		isEdit ? updateArtist : addArtist,
-		null
-	)
+	const [state, formAction, isPending] = useActionState(saveArtist, null)
 
 	// Add upload states
 	const [uploadingImages, setUploadingImages] = useState<{

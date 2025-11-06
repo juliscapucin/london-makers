@@ -1,5 +1,4 @@
-import { addArtist } from './addArtist'
 import { deleteArtist } from './deleteArtist'
-import { updateArtist } from './updateArtist'
+import { saveArtist } from './saveArtist'
 
-export { addArtist, deleteArtist, updateArtist }
+export { deleteArtist, saveArtist }
