@@ -87,4 +87,32 @@ export class ArtistService {
 			return null
 		}
 	}
+
+	/**
+	 * Get brands by user ID
+	 */
+	static async getBrandsByUserId(userId: string): Promise<ArtistType[]> {
+		try {
+			await connectToDatabase()
+			return (await Artist.find({
+				owner: userId,
+			}).lean()) as unknown as ArtistType[]
+		} catch (error) {
+			console.error('Error fetching brands by user ID:', error)
+			return []
+		}
+	}
+
+	/**
+	 * Delete artist by ID
+	 */
+	static async deleteArtist(artistId: string): Promise<void> {
+		try {
+			await connectToDatabase()
+			await Artist.findByIdAndDelete(artistId)
+		} catch (error) {
+			console.error('Error deleting artist:', error)
+			throw new Error('Failed to delete artist')
+		}
+	}
 }

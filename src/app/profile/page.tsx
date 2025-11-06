@@ -1,16 +1,23 @@
-import { getUserSession } from '@/lib/getUserSession'
 import { redirect } from 'next/navigation'
+
+import { getUserSession } from '@/lib/getUserSession'
+import { ArtistService } from '@/lib/services/artistService'
 import { PageWrapper } from '@/components/ui'
 
-export default async function Profile() {
+import { UserProfile } from '@/components'
+
+export default async function Page() {
 	const { session } = await getUserSession()
 	if (!session) redirect('/sign-in')
 
+	const brandsData = await ArtistService.getBrandsByUserId(
+		session.user?.id || ''
+	)
+	const brands = JSON.parse(JSON.stringify(brandsData))
+
 	return (
 		<PageWrapper pageName='profile'>
-			<h1 className='heading-display'>Profile</h1>
-			<h2>Welcome {session.user?.name ?? 'friend'}</h2>
-			{/* <pre>{JSON.stringify(session, null, 2)}</pre> */}
+			<UserProfile user={session.user} brands={brands} />
 		</PageWrapper>
 	)
 }

@@ -7,7 +7,6 @@ type ArtistCardProps = {
 }
 
 export default function ArtistCard({ artist }: ArtistCardProps) {
-	console.log(artist)
 	return (
 		<article>
 			<Link href={`/artists/${artist._id}`} className='block border p-4'>

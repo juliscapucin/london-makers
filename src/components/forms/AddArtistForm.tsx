@@ -577,7 +577,7 @@ export default function AddArtistForm() {
 			{/* IMAGES */}
 			<section className='space-y-6'>
 				<div className='flex items-center justify-between'>
-					<h2 className='heading-title'>Images (max 5)</h2>
+					<h2 className='heading-title'>Images * (max 5)</h2>
 					<AddButton label='Add Image' onClick={() => addArrayItem('images')} />
 				</div>
 
@@ -590,6 +590,7 @@ export default function AddArtistForm() {
 								name='images'
 								className='form-input flex-1'
 								placeholder='https://example.com/image.jpg'
+								required
 							/>
 							{formValues.images.length > 1 && (
 								<RemoveButton

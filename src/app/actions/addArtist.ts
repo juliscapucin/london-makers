@@ -7,33 +7,6 @@ import { getUserSession } from '@/lib/getUserSession'
 import { connectToDatabase } from '@/lib/services/database'
 import cloudinary from '@/lib/cloudinaryConfig'
 
-type FormValues = {
-	businessName: string
-	artistName: string
-	email: string
-	phone: string
-	website: string
-	type: string
-	description: string
-	street: string
-	city: string
-	state: string
-	zip: string
-	employees: string
-	physicalStores: string
-	instagram: string
-	facebook: string
-	bluesky: string
-	tiktok: string
-	rates: {
-		name: string
-		price: number
-	}[]
-	specialties: string[]
-	images: string[]
-	isFeatured: boolean
-}
-
 export type ActionState = {
 	success: boolean
 	error?: string
@@ -44,34 +17,6 @@ export async function addArtist(
 	currentState: ActionState | null,
 	formData: FormData
 ): Promise<ActionState> {
-	// Preserve form values for re-population in case of error
-	const formValues: FormValues = {
-		businessName: formData.get('businessName')?.toString() || '',
-		artistName: formData.get('artistName')?.toString() || '',
-		email: formData.get('email')?.toString() || '',
-		phone: formData.get('phone')?.toString() || '',
-		website: formData.get('website')?.toString() || '',
-		type: formData.get('type')?.toString() || '',
-		description: formData.get('description')?.toString() || '',
-		street: formData.get('street')?.toString() || '',
-		city: formData.get('city')?.toString() || '',
-		state: formData.get('state')?.toString() || '',
-		zip: formData.get('zip')?.toString() || '',
-		employees: formData.get('employees')?.toString() || '',
-		physicalStores: formData.get('physicalStores')?.toString() || '',
-		instagram: formData.get('instagram')?.toString() || '',
-		facebook: formData.get('facebook')?.toString() || '',
-		bluesky: formData.get('bluesky')?.toString() || '',
-		tiktok: formData.get('tiktok')?.toString() || '',
-		rates: [],
-		specialties: formData
-			.getAll('specialties')
-			.map((s) => s.toString())
-			.filter((s) => s.trim()),
-		images: [],
-		isFeatured: formData.get('isFeatured') === 'on',
-	}
-
 	try {
 		const { user, session } = await getUserSession()
 		if (!user || !session || user.role !== 'admin') {
@@ -116,35 +61,36 @@ export async function addArtist(
 			}
 		}
 
-		// Filter out empty values
+		// Build cleaned data
 		const cleanedData = {
 			owner: session.user.id,
 			businessName,
 			artist_info: {
 				name: artistName,
 				email,
-				phone: formValues.phone || undefined,
-				website: formValues.website || undefined,
+				phone: formData.get('phone')?.toString().trim() || undefined,
+				website: formData.get('website')?.toString().trim() || undefined,
 			},
-			type: formValues.type || undefined,
-			description: formValues.description || undefined,
+			type: formData.get('type')?.toString().trim() || undefined,
+			description: formData.get('description')?.toString().trim() || undefined,
 			location: {
-				street: formValues.street || undefined,
-				city: formValues.city || undefined,
-				state: formValues.state || undefined,
-				zip: formValues.zip || undefined,
+				street: formData.get('street')?.toString().trim() || undefined,
+				city: formData.get('city')?.toString().trim() || undefined,
+				state: formData.get('state')?.toString().trim() || undefined,
+				zip: formData.get('zip')?.toString().trim() || undefined,
 			},
-			employees: formValues.employees || undefined,
-			physical_stores: formValues.physicalStores || undefined,
+			employees: formData.get('employees')?.toString().trim() || undefined,
+			physical_stores:
+				formData.get('physicalStores')?.toString().trim() || undefined,
 			socials: {
-				instagram: formValues.instagram || undefined,
-				facebook: formValues.facebook || undefined,
-				bluesky: formValues.bluesky || undefined,
-				tiktok: formValues.tiktok || undefined,
+				instagram: formData.get('instagram')?.toString().trim() || undefined,
+				facebook: formData.get('facebook')?.toString().trim() || undefined,
+				bluesky: formData.get('bluesky')?.toString().trim() || undefined,
+				tiktok: formData.get('tiktok')?.toString().trim() || undefined,
 			},
 			rates,
 			specialties,
-			is_featured: formValues.isFeatured,
+			is_featured: formData.get('isFeatured') === 'on',
 			images: [] as string[], // Will be populated after upload
 		}
 

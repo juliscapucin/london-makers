@@ -26,26 +26,30 @@ export default async function Page({
 	return (
 		<PageWrapper pageName='artist-detail' classes='pb-32' hasContainer={false}>
 			{/* IMAGES */}
-			<div className='flex'>
-				{[1, 2, 3].map((index) => (
-					<ImageWithSpinner
-						key={index}
-						imageSrc={{
-							url: artist.images[0],
-							alt: artist.businessName,
-							width: 800,
-							height: 600,
-						}}
-						containerClassName={`relative w-screen h-screen ${
-							index === 1 || index === 3 ? 'hidden 3xl:block' : ''
-						}`}
-						imageClassName='w-full h-full object-cover object-center'
-						altFallback={artist.businessName}
-						sizes='100vw'
-						fill
-					/>
-				))}
-			</div>
+			{artist.images && artist.images.length > 0 ? (
+				<div className='flex'>
+					{artist.images.map((image, index) => (
+						<ImageWithSpinner
+							key={index}
+							imageSrc={{
+								url: image,
+								alt: artist.businessName,
+								width: 800,
+								height: 600,
+							}}
+							containerClassName={`relative w-screen h-screen ${
+								index === 1 || index === 3 ? 'hidden 3xl:block' : ''
+							}`}
+							imageClassName='w-full h-full object-cover object-center'
+							altFallback={artist.businessName}
+							sizes='100vw'
+							fill
+						/>
+					))}
+				</div>
+			) : (
+				<EmptyResults message='No images found for this artist.' />
+			)}
 			<Container classes='pt-8 grid grid-cols-12 gap-8'>
 				{/* MAIN CONTENT / LEFT COLUMN */}
 				<div className='col-span-12 md:col-span-9'>

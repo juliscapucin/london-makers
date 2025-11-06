@@ -8,8 +8,8 @@ import { getUserSession } from '@/lib/getUserSession'
 export default async function Page() {
 	const { user, session } = await getUserSession()
 
-	if (!user || !session || user.role !== 'admin') {
-		redirect('/?error=access-denied')
+	if (!user || !session) {
+		redirect('/auth/sign-in')
 	}
 
 	return (

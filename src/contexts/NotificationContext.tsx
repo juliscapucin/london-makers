@@ -165,6 +165,8 @@ function NotificationItem({
 export function NotificationProvider({ children }: { children: ReactNode }) {
 	const [notifications, setNotifications] = useState<Notification[]>([])
 
+	console.log('NOTIFICATION CONTEXT')
+
 	const addNotification = useCallback(
 		(notificationData: Omit<Notification, 'id'>) => {
 			const id =

@@ -41,7 +41,7 @@ const artistSchema = new Schema(
 			},
 		],
 		specialties: [{ type: String }],
-		images: [{ type: String }],
+		images: { type: [String], required: true },
 		is_featured: { type: Boolean, default: false },
 	},
 	{
