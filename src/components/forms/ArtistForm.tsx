@@ -7,6 +7,21 @@ import { saveArtist } from '@/app/actions'
 import { useNotifications } from '@/contexts'
 import { ArtistImagesForm } from '@/components/forms'
 
+// Helper function to extract public ID from Cloudinary URL
+const getPublicIdFromUrl = (url: string): string => {
+	try {
+		// Extract public ID from Cloudinary URL
+		// URL format: https://res.cloudinary.com/cloud-name/image/upload/v123456789/london-makers/folder/public-id.jpg
+		const parts = url.split('/')
+		const filename = parts[parts.length - 1]
+		const publicId = filename.split('.')[0] // Remove extension
+		const folder = parts[parts.length - 2]
+		return folder ? `london-makers/${folder}/${publicId}` : publicId
+	} catch {
+		return ''
+	}
+}
+
 type FormValues = {
 	_id?: string
 	businessName: string
@@ -68,31 +83,29 @@ export default function ArtistForm({
 
 	// This state to keeps track the data in case of error, so user doesn't lose inputs
 	// initialData is passed when editing an existing artist
-	const [formValues, setFormValues] = useState<FormValues>(
-		initialData || {
-			businessName: '',
-			artistName: '',
-			email: '',
-			phone: '',
-			website: '',
-			type: '',
-			description: '',
-			street: '',
-			city: '',
-			state: '',
-			zip: '',
-			employees: '',
-			physicalStores: '',
-			instagram: '',
-			facebook: '',
-			bluesky: '',
-			tiktok: '',
-			rates: [{ name: '', price: 0 }],
-			specialties: [''],
-			images: [''],
-			isFeatured: false,
-		}
-	)
+	const [formValues, setFormValues] = useState<FormValues>({
+		businessName: initialData?.businessName || '',
+		artistName: initialData?.artistName || '',
+		email: initialData?.email || '',
+		phone: initialData?.phone || '',
+		website: initialData?.website || '',
+		type: initialData?.type || '',
+		description: initialData?.description || '',
+		street: initialData?.street || '',
+		city: initialData?.city || '',
+		state: initialData?.state || '',
+		zip: initialData?.zip || '',
+		employees: initialData?.employees || '',
+		physicalStores: initialData?.physicalStores || '',
+		instagram: initialData?.instagram || '',
+		facebook: initialData?.facebook || '',
+		bluesky: initialData?.bluesky || '',
+		tiktok: initialData?.tiktok || '',
+		rates: initialData?.rates || [{ name: '', price: 0 }],
+		specialties: initialData?.specialties || [''],
+		images: initialData?.images || [''],
+		isFeatured: initialData?.isFeatured || false,
+	})
 
 	// Update the uploadImage function to handle multiple images better:
 	const uploadImage = async (file: File, index: number) => {
@@ -129,10 +142,12 @@ export default function ArtistForm({
 
 			const data = await response.json()
 
-			if (data.url) {
+			if (data.url && data.public_id) {
 				setFormValues((prev) => {
 					const newImages = [...prev.images]
+
 					newImages[index] = data.url
+
 					return { ...prev, images: newImages }
 				})
 
@@ -160,6 +175,73 @@ export default function ArtistForm({
 		} finally {
 			setUploadingImages((prev) => ({ ...prev, [index]: false }))
 		}
+	}
+
+	// Delete image
+	const deleteImage = async (index: number) => {
+		const imageUrl = formValues.images[index]
+
+		// Show confirmation for uploaded images
+		if (imageUrl?.startsWith('http')) {
+			const confirmed = window.confirm(
+				'Are you sure you want to delete this image? This action cannot be undone.'
+			)
+			if (!confirmed) return
+		}
+
+		console.log('Image url:', imageUrl)
+
+		// Only delete from Cloudinary if it's an uploaded image
+		if (imageUrl?.startsWith('http')) {
+			// Extract public ID
+			const publicId = getPublicIdFromUrl(imageUrl)
+
+			console.log('Public ID to delete:', publicId)
+
+			try {
+				const response = await fetch(
+					`/api/deleteImage?publicId=${encodeURIComponent(publicId)}`,
+					{
+						method: 'DELETE',
+					}
+				)
+
+				if (!response.ok) {
+					const errorData = await response.json()
+					showError(
+						errorData.error || 'Failed to delete image',
+						'Delete Failed',
+						8000
+					)
+				}
+
+				showSuccess('Image deleted successfully', 'Deleted', 2000)
+			} catch (error) {
+				console.error('Delete error:', error)
+				showError(
+					error instanceof Error
+						? error.message
+						: 'Failed to delete image from storage',
+					'Delete Failed',
+					5000
+				)
+			}
+		}
+
+		// Remove from form state
+		setFormValues((prev) => {
+			const newImages = prev.images.filter((_, i) => i !== index)
+
+			// If no images left, add one empty slot
+			if (newImages.length === 0) {
+				newImages.push('')
+			}
+
+			return {
+				...prev,
+				images: newImages,
+			}
+		})
 	}
 
 	// Handle file input change
@@ -736,7 +818,7 @@ export default function ArtistForm({
 			<ArtistImagesForm
 				formValues={formValues}
 				addArrayItem={addArrayItem}
-				removeArrayItem={removeArrayItem}
+				deleteImage={deleteImage}
 				handleImageChange={handleImageChange}
 				uploadingImages={uploadingImages}
 				isPending={isPending}
