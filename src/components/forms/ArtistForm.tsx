@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 
 import { saveArtist } from '@/app/actions'
 import { useNotifications } from '@/contexts'
-import Image from 'next/image'
+import { ArtistImagesForm } from '@/components/forms'
 
 type FormValues = {
 	_id?: string
@@ -65,7 +65,6 @@ export default function ArtistForm({
 	const [uploadingImages, setUploadingImages] = useState<{
 		[key: number]: boolean
 	}>({})
-	const [uploadedImageUrls, setUploadedImageUrls] = useState<string[]>([])
 
 	// This state to keeps track the data in case of error, so user doesn't lose inputs
 	// initialData is passed when editing an existing artist
@@ -95,6 +94,7 @@ export default function ArtistForm({
 		}
 	)
 
+	// Update the uploadImage function to handle multiple images better:
 	const uploadImage = async (file: File, index: number) => {
 		if (!file || file.size === 0) return
 
@@ -111,7 +111,7 @@ export default function ArtistForm({
 		}
 
 		setUploadingImages((prev) => ({ ...prev, [index]: true }))
-		showInfo('Uploading image...', 'Upload in Progress', 8000)
+		showInfo('Uploading image...', 'Upload in Progress', 3000)
 
 		try {
 			const formData = new FormData()
@@ -123,13 +123,12 @@ export default function ArtistForm({
 			})
 
 			if (!response.ok) {
-				throw new Error('Upload failed')
+				const errorData = await response.json()
+				throw new Error(errorData.error || 'Upload failed')
 			}
 
 			const data = await response.json()
 
-			// Success
-			// Update form values with the uploaded image URL
 			if (data.url) {
 				setFormValues((prev) => {
 					const newImages = [...prev.images]
@@ -137,22 +136,27 @@ export default function ArtistForm({
 					return { ...prev, images: newImages }
 				})
 
-				showSuccess('Image uploaded successfully!', 'Upload Complete', 8000)
+				showSuccess('Image uploaded successfully!', 'Upload Complete', 3000)
 			} else {
-				// Failure
-				showError(
-					'Failed to upload image. Please try again.',
-					'Upload Failed',
-					8000
-				)
+				throw new Error('No URL returned from upload')
 			}
 		} catch (error) {
 			console.error('Upload error:', error)
 			showError(
-				'Failed to upload image. Please try again.',
+				error instanceof Error
+					? error.message
+					: 'Failed to upload image. Please try again.',
 				'Upload Failed',
-				15000
+				5000
 			)
+
+			// Clear the file input on error
+			const fileInput = document.getElementById(
+				`image-${index}`
+			) as HTMLInputElement
+			if (fileInput) {
+				fileInput.value = ''
+			}
 		} finally {
 			setUploadingImages((prev) => ({ ...prev, [index]: false }))
 		}
@@ -458,6 +462,13 @@ export default function ArtistForm({
 							type='text'
 							id='state'
 							name='state'
+							value={formValues.state}
+							onChange={(e) =>
+								setFormValues((prev) => ({
+									...prev,
+									state: e.target.value,
+								}))
+							}
 							className='form-input w-full'
 							placeholder='England'
 						/>
@@ -499,6 +510,13 @@ export default function ArtistForm({
 							type='number'
 							id='employees'
 							name='employees'
+							value={formValues.employees}
+							onChange={(e) =>
+								setFormValues((prev) => ({
+									...prev,
+									employees: e.target.value,
+								}))
+							}
 							min='0'
 							className='form-input w-full'
 							placeholder='0'
@@ -513,6 +531,13 @@ export default function ArtistForm({
 							type='number'
 							id='physicalStores'
 							name='physicalStores'
+							value={formValues.physicalStores}
+							onChange={(e) =>
+								setFormValues((prev) => ({
+									...prev,
+									physicalStores: e.target.value,
+								}))
+							}
 							min='0'
 							className='form-input w-full'
 							placeholder='0'
@@ -534,6 +559,13 @@ export default function ArtistForm({
 							type='text'
 							id='instagram'
 							name='instagram'
+							value={formValues.instagram}
+							onChange={(e) =>
+								setFormValues((prev) => ({
+									...prev,
+									instagram: e.target.value,
+								}))
+							}
 							className='form-input w-full'
 							placeholder='@username'
 						/>
@@ -547,6 +579,13 @@ export default function ArtistForm({
 							type='text'
 							id='facebook'
 							name='facebook'
+							value={formValues.facebook}
+							onChange={(e) =>
+								setFormValues((prev) => ({
+									...prev,
+									facebook: e.target.value,
+								}))
+							}
 							className='form-input w-full'
 							placeholder='facebook.com/page'
 						/>
@@ -560,6 +599,13 @@ export default function ArtistForm({
 							type='text'
 							id='bluesky'
 							name='bluesky'
+							value={formValues.bluesky}
+							onChange={(e) =>
+								setFormValues((prev) => ({
+									...prev,
+									bluesky: e.target.value,
+								}))
+							}
 							className='form-input w-full'
 							placeholder='@username.bsky.social'
 						/>
@@ -573,6 +619,13 @@ export default function ArtistForm({
 							type='text'
 							id='tiktok'
 							name='tiktok'
+							value={formValues.tiktok}
+							onChange={(e) =>
+								setFormValues((prev) => ({
+									...prev,
+									tiktok: e.target.value,
+								}))
+							}
 							className='form-input w-full'
 							placeholder='@username'
 						/>
@@ -680,122 +733,14 @@ export default function ArtistForm({
 			</section>
 
 			{/* IMAGES */}
-			<section className='space-y-6'>
-				<div className='flex items-center justify-between'>
-					<h2 className='heading-title'>Images * (max 5)</h2>
-					<Button
-						label='Add Image'
-						onClick={() => addArrayItem('images')}
-						disabled={formValues.images.length >= 5}
-					/>
-				</div>
-
-				<div className='space-y-3'>
-					{formValues.images.map((image, index) => (
-						<div key={index} className='flex gap-4 items-center'>
-							{/* Hidden input to store uploaded image URLs */}
-							<input
-								type='hidden'
-								name='uploadedImages'
-								value={image}
-								key={`hidden-image-${index}`}
-							/>
-							<div className='flex-1 space-y-2'>
-								<input
-									type='file'
-									id={`image-${index}`}
-									accept='image/*'
-									onChange={(e) => handleImageChange(e, index)}
-									className='form-input flex-1'
-									disabled={uploadingImages[index] || isPending}
-								/>
-
-								{/* Upload progress indicator */}
-								{uploadingImages[index] && (
-									<div className='flex items-center gap-2 text-sm text-gray-600'>
-										<div className='w-4 h-4 border-2 border-secondary border-t-transparent rounded-full animate-spin' />
-										Uploading...
-									</div>
-								)}
-
-								{/* Show uploaded image preview */}
-								{image &&
-									image.startsWith('http') &&
-									!uploadingImages[index] && (
-										<div className='flex items-center gap-2'>
-											<Image
-												src={image}
-												alt={`Upload ${index + 1}`}
-												className='w-16 h-16 object-cover rounded border'
-												width={64}
-												height={64}
-											/>
-											<div className='flex items-center gap-1 text-sm text-green-600'>
-												<svg
-													className='w-4 h-4'
-													fill='none'
-													stroke='currentColor'
-													viewBox='0 0 24 24'>
-													<path
-														strokeLinecap='round'
-														strokeLinejoin='round'
-														strokeWidth={2}
-														d='M5 13l4 4L19 7'
-													/>
-												</svg>
-												Uploaded successfully
-											</div>
-										</div>
-									)}
-							</div>
-							{formValues.images.length > 1 && (
-								<Button
-									onClick={() => {
-										// Remove from uploadedImageUrls as well
-										setUploadedImageUrls((prev) =>
-											prev.filter((_, i) => i !== index)
-										)
-										removeArrayItem('images', index)
-									}}
-									label='Remove'
-									disabled={uploadingImages[index] || isPending}
-								/>
-							)}
-						</div>
-					))}
-				</div>
-
-				{formValues.images.length >= 5 && (
-					<p className='text-sm text-gray-600'>Maximum of 5 images allowed</p>
-				)}
-			</section>
-			{/* <section className='space-y-6'>
-				<div className='flex items-center justify-between'>
-					<h2 className='heading-title'>Images * (max 5)</h2>
-					<Button label='Add Image' onClick={() => addArrayItem('images')} />
-				</div>
-
-				<div className='space-y-3'>
-					{formValues.images.map((image, index) => (
-						<div key={index} className='flex gap-4 items-center'>
-							<input
-								type='file'
-								id={`image-${index}`}
-								name='images'
-								className='form-input flex-1'
-								placeholder='https://example.com/image.jpg'
-								required
-							/>
-							{formValues.images.length > 1 && (
-								<Button
-									onClick={() => removeArrayItem('images', index)}
-									label='Remove'
-								/>
-							)}
-						</div>
-					))}
-				</div>
-			</section> */}
+			<ArtistImagesForm
+				formValues={formValues}
+				addArrayItem={addArrayItem}
+				removeArrayItem={removeArrayItem}
+				handleImageChange={handleImageChange}
+				uploadingImages={uploadingImages}
+				isPending={isPending}
+			/>
 
 			{/* FEATURED */}
 			<section className='space-y-6'>
@@ -804,6 +749,13 @@ export default function ArtistForm({
 						type='checkbox'
 						id='isFeatured'
 						name='isFeatured'
+						checked={formValues.isFeatured}
+						onChange={(e) =>
+							setFormValues((prev) => ({
+								...prev,
+								isFeatured: e.target.checked,
+							}))
+						}
 						className='w-4 h-4 text-accent-focus focus:ring-accent-focus border-secondary rounded'
 					/>
 					<label htmlFor='isFeatured' className='text-label'>
