@@ -1,5 +1,3 @@
-import { ImageType } from './ImageType'
-
 export type ArtistType = {
 	_id: string
 	owner: string
@@ -15,7 +13,7 @@ export type ArtistType = {
 	location: {
 		street: string
 		city: string
-		state: string
+		state?: string
 		zip: string
 	}
 	employees?: number

@@ -67,7 +67,11 @@ export default function UserProfile({ user, brands }: UserProfileProps) {
 									{brand.businessName}
 								</Link>
 								<div className='flex gap-8'>
-									<button className='btn btn-ghost'>Edit</button>
+									<Link
+										className='btn btn-ghost'
+										href={`/artists/${brand._id}/edit`}>
+										Edit
+									</Link>
 									<button
 										className='btn btn-ghost'
 										onClick={() => handleDeleteArtist(brand._id)}>

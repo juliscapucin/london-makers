@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 
-import { AddArtistForm } from '@/components/forms'
+import { ArtistForm } from '@/components/forms'
 import { PageWrapper, Container } from '@/components/ui'
 
 import { getUserSession } from '@/lib/getUserSession'
@@ -26,7 +26,7 @@ export default async function Page() {
 						</p>
 					</header>
 
-					<AddArtistForm />
+					<ArtistForm />
 				</div>
 			</Container>
 		</PageWrapper>

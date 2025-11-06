@@ -3,10 +3,13 @@
 import { useState, useActionState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
-import { addArtist } from '@/app/actions/addArtist'
+import cloudinary from '@/lib/cloudinaryConfig'
+import { addArtist, updateArtist } from '@/app/actions'
 import { useNotifications } from '@/contexts'
+import Image from 'next/image'
 
 type FormValues = {
+	_id?: string
 	businessName: string
 	artistName: string
 	email: string
@@ -16,7 +19,7 @@ type FormValues = {
 	description: string
 	street: string
 	city: string
-	state: string
+	state?: string
 	zip: string
 	employees: string
 	physicalStores: string
@@ -33,51 +36,142 @@ type FormValues = {
 	isFeatured: boolean
 }
 
-function AddButton({ onClick, label }: { onClick: () => void; label: string }) {
+type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+	label: string
+}
+
+function Button({ label, ...props }: ButtonProps) {
 	return (
-		<button type='button' className='btn btn-ghost' onClick={onClick}>
+		<button type='button' className='btn btn-ghost' {...props}>
 			{label}
 		</button>
 	)
 }
 
-function RemoveButton({ onClick }: { onClick: () => void }) {
-	return (
-		<button type='button' className='btn btn-ghost' onClick={onClick}>
-			Remove
-		</button>
-	)
+type AddArtistFormProps = {
+	isEdit?: boolean
+	initialData?: FormValues
 }
 
-export default function AddArtistForm() {
+export default function ArtistForm({
+	isEdit = false,
+	initialData,
+}: AddArtistFormProps) {
 	const router = useRouter()
-	const { showSuccess, showError } = useNotifications()
+	const { showSuccess, showError, showInfo } = useNotifications()
 
-	const [state, formAction, isPending] = useActionState(addArtist, null)
+	const [state, formAction, isPending] = useActionState(
+		isEdit ? updateArtist : addArtist,
+		null
+	)
 
-	const [formValues, setFormValues] = useState<FormValues>({
-		businessName: '',
-		artistName: '',
-		email: '',
-		phone: '',
-		website: '',
-		type: '',
-		description: '',
-		street: '',
-		city: '',
-		state: '',
-		zip: '',
-		employees: '',
-		physicalStores: '',
-		instagram: '',
-		facebook: '',
-		bluesky: '',
-		tiktok: '',
-		rates: [{ name: '', price: 0 }],
-		specialties: [''],
-		images: [''],
-		isFeatured: false,
-	})
+	// Add upload states
+	const [uploadingImages, setUploadingImages] = useState<{
+		[key: number]: boolean
+	}>({})
+	const [uploadedImageUrls, setUploadedImageUrls] = useState<string[]>([])
+
+	// This state to keeps track the data in case of error, so user doesn't lose inputs
+	// initialData is passed when editing an existing artist
+	const [formValues, setFormValues] = useState<FormValues>(
+		initialData || {
+			businessName: '',
+			artistName: '',
+			email: '',
+			phone: '',
+			website: '',
+			type: '',
+			description: '',
+			street: '',
+			city: '',
+			state: '',
+			zip: '',
+			employees: '',
+			physicalStores: '',
+			instagram: '',
+			facebook: '',
+			bluesky: '',
+			tiktok: '',
+			rates: [{ name: '', price: 0 }],
+			specialties: [''],
+			images: [''],
+			isFeatured: false,
+		}
+	)
+
+	const uploadImage = async (file: File, index: number) => {
+		if (!file || file.size === 0) return
+
+		// Validate file type
+		if (!file.type.startsWith('image/')) {
+			showError('Please select a valid image file', 'Invalid File Type')
+			return
+		}
+
+		// Validate file size (e.g., max 1MB)
+		if (file.size > 1 * 1024 * 1024) {
+			showError('Image size must be less than 1MB', 'File Too Large')
+			return
+		}
+
+		setUploadingImages((prev) => ({ ...prev, [index]: true }))
+		showInfo('Uploading image...', 'Upload in Progress', 8000)
+
+		try {
+			const formData = new FormData()
+			formData.append('file', file)
+
+			const response = await fetch('/api/uploadImage', {
+				method: 'POST',
+				body: formData,
+			})
+
+			if (!response.ok) {
+				throw new Error('Upload failed')
+			}
+
+			const data = await response.json()
+
+			// Success
+			// Update form values with the uploaded image URL
+			if (data.url) {
+				setFormValues((prev) => {
+					const newImages = [...prev.images]
+					newImages[index] = data.url
+					return { ...prev, images: newImages }
+				})
+
+				showSuccess('Image uploaded successfully!', 'Upload Complete', 8000)
+			} else {
+				// Failure
+				showError(
+					'Failed to upload image. Please try again.',
+					'Upload Failed',
+					8000
+				)
+			}
+		} catch (error) {
+			console.error('Upload error:', error)
+			showError(
+				'Failed to upload image. Please try again.',
+				'Upload Failed',
+				15000
+			)
+		} finally {
+			setUploadingImages((prev) => ({ ...prev, [index]: false }))
+		}
+	}
+
+	// Handle file input change
+	const handleImageChange = (
+		e: React.ChangeEvent<HTMLInputElement>,
+		index: number
+	) => {
+		const file = e.target.files?.[0]
+		if (file) {
+			uploadImage(file, index)
+		}
+	}
 
 	const addRate = () => {
 		setFormValues((prev) => ({
@@ -110,7 +204,11 @@ export default function AddArtistForm() {
 	// Handle form state changes
 	useEffect(() => {
 		if (state?.success && state?.artistId) {
-			showSuccess('Artist has been added successfully!', 'Success', 5000)
+			showSuccess(
+				`Artist has been ${isEdit ? 'updated' : 'added'} successfully!`,
+				'Success',
+				5000
+			)
 
 			// Redirect after a short delay
 			setTimeout(() => {
@@ -118,7 +216,11 @@ export default function AddArtistForm() {
 			}, 1500)
 		}
 		if (state?.error) {
-			showError(state.error, 'Error Creating Artist', 8000)
+			showError(
+				state.error,
+				`Error ${isEdit ? 'Updating' : 'Creating'} Artist`,
+				8000
+			)
 		}
 	}, [
 		state?.success,
@@ -127,10 +229,16 @@ export default function AddArtistForm() {
 		router,
 		showSuccess,
 		showError,
+		isEdit,
 	])
 
 	return (
 		<form action={formAction} className='space-y-8 max-w-4xl'>
+			{/* Add hidden input for artistId when editing */}
+			{isEdit && initialData?._id && (
+				<input type='hidden' name='artistId' value={initialData._id} />
+			)}
+
 			{/* BASIC INFORMATION */}
 			<section className='space-y-6'>
 				<h2 className='heading-title'>Basic Information</h2>
@@ -480,7 +588,7 @@ export default function AddArtistForm() {
 			<section className='space-y-6'>
 				<div className='flex items-center justify-between'>
 					<h2 className='heading-title'>Pricing</h2>
-					<AddButton label='Add Rate' onClick={addRate} />
+					<Button label='Add Rate' onClick={addRate} />
 				</div>
 
 				<div className='space-y-4'>
@@ -529,7 +637,7 @@ export default function AddArtistForm() {
 								/>
 							</div>
 							{formValues.rates.length > 1 && (
-								<RemoveButton onClick={() => removeRate(index)} />
+								<Button onClick={() => removeRate(index)} label='Remove' />
 							)}
 						</div>
 					))}
@@ -540,7 +648,7 @@ export default function AddArtistForm() {
 			<section className='space-y-6'>
 				<div className='flex items-center justify-between'>
 					<h2 className='heading-title'>Specialties</h2>
-					<AddButton
+					<Button
 						label='Add Specialty'
 						onClick={() => addArrayItem('specialties')}
 					/>
@@ -565,8 +673,9 @@ export default function AddArtistForm() {
 								}}
 							/>
 							{formValues.specialties.length > 1 && (
-								<RemoveButton
+								<Button
 									onClick={() => removeArrayItem('specialties', index)}
+									label='Remove'
 								/>
 							)}
 						</div>
@@ -578,7 +687,96 @@ export default function AddArtistForm() {
 			<section className='space-y-6'>
 				<div className='flex items-center justify-between'>
 					<h2 className='heading-title'>Images * (max 5)</h2>
-					<AddButton label='Add Image' onClick={() => addArrayItem('images')} />
+					<Button
+						label='Add Image'
+						onClick={() => addArrayItem('images')}
+						disabled={formValues.images.length >= 5}
+					/>
+				</div>
+
+				<div className='space-y-3'>
+					{formValues.images.map((image, index) => (
+						<div key={index} className='flex gap-4 items-center'>
+							{/* Hidden input to store uploaded image URLs */}
+							<input
+								type='hidden'
+								name='uploadedImages'
+								value={image}
+								key={`hidden-image-${index}`}
+							/>
+							<div className='flex-1 space-y-2'>
+								<input
+									type='file'
+									id={`image-${index}`}
+									accept='image/*'
+									onChange={(e) => handleImageChange(e, index)}
+									className='form-input flex-1'
+									disabled={uploadingImages[index] || isPending}
+								/>
+
+								{/* Upload progress indicator */}
+								{uploadingImages[index] && (
+									<div className='flex items-center gap-2 text-sm text-gray-600'>
+										<div className='w-4 h-4 border-2 border-secondary border-t-transparent rounded-full animate-spin' />
+										Uploading...
+									</div>
+								)}
+
+								{/* Show uploaded image preview */}
+								{image &&
+									image.startsWith('http') &&
+									!uploadingImages[index] && (
+										<div className='flex items-center gap-2'>
+											<Image
+												src={image}
+												alt={`Upload ${index + 1}`}
+												className='w-16 h-16 object-cover rounded border'
+												width={64}
+												height={64}
+											/>
+											<div className='flex items-center gap-1 text-sm text-green-600'>
+												<svg
+													className='w-4 h-4'
+													fill='none'
+													stroke='currentColor'
+													viewBox='0 0 24 24'>
+													<path
+														strokeLinecap='round'
+														strokeLinejoin='round'
+														strokeWidth={2}
+														d='M5 13l4 4L19 7'
+													/>
+												</svg>
+												Uploaded successfully
+											</div>
+										</div>
+									)}
+							</div>
+							{formValues.images.length > 1 && (
+								<Button
+									onClick={() => {
+										// Remove from uploadedImageUrls as well
+										setUploadedImageUrls((prev) =>
+											prev.filter((_, i) => i !== index)
+										)
+										removeArrayItem('images', index)
+									}}
+									label='Remove'
+									disabled={uploadingImages[index] || isPending}
+								/>
+							)}
+						</div>
+					))}
+				</div>
+
+				{formValues.images.length >= 5 && (
+					<p className='text-sm text-gray-600'>Maximum of 5 images allowed</p>
+				)}
+			</section>
+			{/* <section className='space-y-6'>
+				<div className='flex items-center justify-between'>
+					<h2 className='heading-title'>Images * (max 5)</h2>
+					<Button label='Add Image' onClick={() => addArrayItem('images')} />
 				</div>
 
 				<div className='space-y-3'>
@@ -593,14 +791,15 @@ export default function AddArtistForm() {
 								required
 							/>
 							{formValues.images.length > 1 && (
-								<RemoveButton
+								<Button
 									onClick={() => removeArrayItem('images', index)}
+									label='Remove'
 								/>
 							)}
 						</div>
 					))}
 				</div>
-			</section>
+			</section> */}
 
 			{/* FEATURED */}
 			<section className='space-y-6'>
@@ -633,11 +832,14 @@ export default function AddArtistForm() {
 					{isPending ? (
 						<>
 							<div className='w-4 h-4 border-2 border-secondary border-t-transparent rounded-full animate-spin' />
-							Creating Artist...
+							{isEdit ? 'Updating' : 'Creating'} {' Artist...'}
 						</>
+					) : isEdit ? (
+						'Update'
 					) : (
-						'Create Artist'
+						'Create'
 					)}
+					{' Artist'}
 				</button>
 			</div>
 		</form>

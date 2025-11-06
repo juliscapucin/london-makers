@@ -1,3 +1,3 @@
-import AddArtistForm from './AddArtistForm'
+import ArtistForm from './ArtistForm'
 
-export { AddArtistForm }
+export { ArtistForm }

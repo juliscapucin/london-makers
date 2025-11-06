@@ -76,6 +76,23 @@ export class ArtistService {
 	}
 
 	/**
+	 * Add new artist
+	 */
+	static async addArtist(
+		data: Partial<ArtistType>
+	): Promise<ArtistType | null> {
+		try {
+			await connectToDatabase()
+			const newArtist = new Artist(data)
+			await newArtist.save()
+			return newArtist.toObject() as ArtistType
+		} catch (error) {
+			console.error('Error adding new artist:', error)
+			return null
+		}
+	}
+
+	/**
 	 * Get artist by ID
 	 */
 	static async getArtistById(id: string): Promise<ArtistType | null> {
@@ -100,6 +117,45 @@ export class ArtistService {
 		} catch (error) {
 			console.error('Error fetching brands by user ID:', error)
 			return []
+		}
+	}
+
+	/**
+	 * Check if user owns the artist
+	 */
+	static async isUserOwnerOfArtist(
+		userId: string,
+		artistId: string
+	): Promise<boolean> {
+		try {
+			await connectToDatabase()
+			const artist = (await Artist.findById(
+				artistId
+			).lean()) as ArtistType | null
+			if (!artist) {
+				return false
+			}
+			return artist.owner.toString() === userId
+		} catch (error) {
+			console.error('Error checking artist ownership:', error)
+			return false
+		}
+	}
+
+	/**
+	 * Update artist by ID
+	 */
+	static async updateArtist(
+		artistId: string,
+		data: Partial<ArtistType>
+	): Promise<ArtistType | null> {
+		try {
+			await connectToDatabase()
+			const artist = await Artist.findByIdAndUpdate(artistId, data).lean()
+			return artist as ArtistType | null
+		} catch (error) {
+			console.error('Error updating artist:', error)
+			return null
 		}
 	}
 

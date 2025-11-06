@@ -24,10 +24,10 @@ export async function deleteArtist(artistId: string) {
 		}
 
 		// Ensure the artist belongs to the user
-		if (artist.owner.toString() !== userId) {
+		if (!(await ArtistService.isUserOwnerOfArtist(userId, artistId))) {
 			return {
 				success: false,
-				error: 'Unauthorized',
+				error: "You don't have permission to delete this artist",
 			}
 		}
 

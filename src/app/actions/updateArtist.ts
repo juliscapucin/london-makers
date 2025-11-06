@@ -3,11 +3,10 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
-import Artist from '@/lib/models/Artist'
+import { ArtistService } from '@/lib/services/artistService'
 import { getUserSession } from '@/lib/getUserSession'
 import { connectToDatabase } from '@/lib/services/database'
 import cloudinary from '@/lib/cloudinaryConfig'
-import { ArtistService } from '@/lib/services/artistService'
 
 export type ActionState = {
 	success: boolean
@@ -15,7 +14,7 @@ export type ActionState = {
 	artistId?: string
 }
 
-export async function addArtist(
+export async function updateArtist(
 	currentState: ActionState | null,
 	formData: FormData
 ): Promise<ActionState> {
@@ -27,10 +26,29 @@ export async function addArtist(
 	}
 
 	try {
-		if (user.role !== 'admin') {
+		const userId = session.user.id
+		const artistId = formData.get('artistId')?.toString().trim()
+
+		if (!artistId) {
 			return {
 				success: false,
-				error: 'Admin access required',
+				error: 'Artist not found',
+			}
+		}
+		const artist = await ArtistService.getArtistById(artistId)
+
+		if (!artist) {
+			return {
+				success: false,
+				error: 'Artist not found',
+			}
+		}
+
+		// Ensure the artist belongs to the user
+		if (!(await ArtistService.isUserOwnerOfArtist(userId, artistId))) {
+			return {
+				success: false,
+				error: "You don't have permission to update this artist",
 			}
 		}
 
@@ -69,6 +87,8 @@ export async function addArtist(
 		const images = formData
 			.getAll('uploadedImages')
 			.map((img) => img.toString().trim())
+
+		console.log(images)
 
 		if (
 			!type ||
@@ -130,16 +150,19 @@ export async function addArtist(
 		// Ensure database connection before saving
 		await connectToDatabase()
 
-		// Create the artist
-		const newArtist = await ArtistService.addArtist(cleanedData)
+		// Update the artist
+		const updatedArtist = await ArtistService.updateArtist(
+			artistId,
+			cleanedData
+		)
 
-		if (newArtist) {
-			revalidatePath('/artists')
-			return { success: true, artistId: newArtist._id.toString() }
+		if (updatedArtist) {
+			revalidatePath(`/artists/${updatedArtist._id.toString()}`)
+			return { success: true, artistId: updatedArtist._id.toString() }
 		} else {
 			return {
 				success: false,
-				error: 'Failed to create artist',
+				error: 'Failed to update artist',
 			}
 		}
 	} catch (error) {
