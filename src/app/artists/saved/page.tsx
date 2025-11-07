@@ -15,20 +15,17 @@ export default async function Page() {
 
 	const bookmarks = await UserService.getUserBookmarks(userSession.id)
 
-	console.log(bookmarks)
-
-	return (
+	return bookmarks.length === 0 ? (
+		<EmptyResults message='You have no saved artists yet. Browse artists and bookmark your favorites to see them here.' />
+	) : (
 		<PageWrapper pageName='savedArtists'>
 			<h1 className='heading-display'>Saved Artists</h1>
-			{bookmarks.length === 0 ? (
-				<EmptyResults message='You have no saved artists yet. Browse artists and bookmark your favorites to see them here.' />
-			) : (
-				<ul className='list-disc list-inside mt-6 space-y-4'>
-					{bookmarks.map((artist) => (
-						<ArtistCard key={artist._id.toString()} artist={artist} />
-					))}
-				</ul>
-			)}
+
+			<ul className='list-disc list-inside mt-6 space-y-4'>
+				{bookmarks.map((artist) => (
+					<ArtistCard key={artist._id.toString()} artist={artist} />
+				))}
+			</ul>
 		</PageWrapper>
 	)
 }

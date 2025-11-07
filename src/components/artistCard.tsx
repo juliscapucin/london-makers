@@ -1,6 +1,7 @@
 import { ArtistType } from '@/types'
 import Link from 'next/link'
 import Image from 'next/image'
+import { ButtonBookmark } from '@/components/buttons'
 
 type ArtistCardProps = {
 	artist: ArtistType
@@ -24,6 +25,7 @@ export default function ArtistCard({ artist }: ArtistCardProps) {
 				<h2>{artist.businessName}</h2>
 				<p>{artist.type}</p>
 			</Link>
+			{/* <ButtonBookmark artist={artist} /> */}
 		</article>
 	)
 }

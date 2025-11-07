@@ -13,6 +13,8 @@ gsap.registerPlugin(ScrollSmoother, ScrollTrigger, GSDevTools)
 import { navLinks } from '@/data'
 
 import { Footer, Header } from '@/components/ui'
+import { useSession } from '@/contexts'
+import { SessionType } from '@/types'
 
 type PageWrapperProps = {
 	variant?: 'primary' | 'secondary' | 'tertiary' | 'accent'
@@ -21,6 +23,7 @@ type PageWrapperProps = {
 	hasContainer?: boolean
 	hasFooter?: boolean
 	pageName: string
+	sessionData?: SessionType
 }
 
 export default function PageWrapper({
@@ -30,8 +33,10 @@ export default function PageWrapper({
 	hasContainer = true,
 	hasFooter = true,
 	pageName,
+	sessionData,
 }: PageWrapperProps) {
 	const pathname = usePathname()
+	const { setSession } = useSession()
 
 	const scrollSmootherRef = useRef<ScrollSmoother | null>(null)
 	const pageContentRef = useRef<HTMLDivElement | null>(null)

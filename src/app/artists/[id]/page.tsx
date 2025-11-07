@@ -10,7 +10,6 @@ import {
 import { ArtistCarousel } from '@/components'
 import { ButtonBack, ButtonBookmark, ButtonShare } from '@/components/buttons'
 import { ArtistContactForm } from '@/components/forms'
-import { UserService } from '@/lib/services/userService'
 
 export default async function Page({
 	params,
@@ -39,7 +38,11 @@ export default async function Page({
 	}
 
 	return (
-		<PageWrapper pageName='artist-detail' classes='pb-32' hasContainer={false}>
+		<PageWrapper
+			sessionData={session}
+			pageName='artist-detail'
+			classes='pb-32'
+			hasContainer={false}>
 			{/* IMAGES */}
 			{artist.images && artist.images.length > 0 ? (
 				<div className='flex'>

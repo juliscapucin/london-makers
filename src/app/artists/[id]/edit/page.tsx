@@ -13,9 +13,9 @@ export default async function Page({
 	params: Promise<{ id: string }>
 }) {
 	const { id } = await params
-	const { user, session } = await getUserSession()
+	const { userSession, session } = await getUserSession()
 
-	if (!user || !session) {
+	if (!userSession || !session) {
 		redirect('/auth/signin')
 	}
 
@@ -54,7 +54,7 @@ export default async function Page({
 	}
 
 	return (
-		<PageWrapper pageName='edit-artist' classes='py-12'>
+		<PageWrapper pageName='edit-artist' classes='py-12' sessionData={session}>
 			<div className='max-w-4xl mx-auto'>
 				<header className='mb-8'>
 					<h1 className='heading-display text-secondary mb-4'>Edit Artist</h1>

@@ -1,4 +1,4 @@
-export function convertToSerializableObject<T extends Record<string, unknown>>(
+export function convertToSimpleObject<T extends Record<string, unknown>>(
 	data: T
 ): T {
 	const result = { ...data }

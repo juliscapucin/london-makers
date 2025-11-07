@@ -4,7 +4,7 @@ import { useActionState, useEffect } from 'react'
 
 import { ArtistType } from '@/types'
 import { IconBookmark } from '@/components/icons'
-import { bookmarkArtist } from '@/app/actions/bookmarkArtist'
+import { bookmarkArtist } from '@/app/actions'
 import { useNotifications } from '@/contexts'
 
 type ButtonBookmarkProps = {

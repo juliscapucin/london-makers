@@ -1,3 +1,3 @@
-import { convertToSerializableObject } from './convertToObject'
+import { convertToSimpleObject } from './convertToObject'
 
-export { convertToSerializableObject }
+export { convertToSimpleObject }

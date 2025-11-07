@@ -17,11 +17,10 @@ export default function EmptyResults({
 
 	return lines.length > 1 && variant === 'page' ? (
 		<PageWrapper
-			variant='secondary'
 			hasContainer={false}
-			classes='flex flex-col items-center justify-center h-svh'
+			classes='flex flex-col items-center justify-center'
 			pageName='empty results'>
-			<div>
+			<div className='h-content flex flex-col items-center justify-center'>
 				<h1 className='heading-headline text-center text-pretty'>{lines[0]}</h1>
 				<div className='max-w-prose'>
 					{lines.slice(1).map((line, index) => (

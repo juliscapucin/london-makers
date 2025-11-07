@@ -13,7 +13,7 @@ export default async function Page() {
 	}
 
 	return (
-		<PageWrapper pageName='add-artist' classes='py-12'>
+		<PageWrapper pageName='add-artist' classes='py-12' sessionData={session}>
 			<Container>
 				<div className='max-w-4xl mx-auto'>
 					<header className='mb-8'>
