@@ -5,6 +5,7 @@ import IconArrowUpRight from './IconArrowUpRight'
 import IconBurger from './IconBurger'
 import IconChevron from './IconChevron'
 import IconClose from './IconClose'
+import IconBookmark from './IconBookmark'
 import IconFullscreen from './IconFullscreen'
 import IconPause from './IconPause'
 import IconPlay from './IconPlay'
@@ -20,6 +21,7 @@ export {
 	IconBurger,
 	IconChevron,
 	IconClose,
+	IconBookmark,
 	IconFullscreen,
 	IconPause,
 	IconPlay,

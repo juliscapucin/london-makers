@@ -1,3 +1,6 @@
+import { redirect } from 'next/navigation'
+
+import { getUserSession } from '@/lib/getUserSession'
 import { ArtistService } from '@/lib/services/artistService'
 import {
 	Container,
@@ -7,13 +10,20 @@ import {
 	PageWrapper,
 } from '@/components/ui'
 import { ArtistCarousel } from '@/components'
-import { ButtonBack } from '@/components/buttons'
+import { ButtonBack, ButtonBookmark, ButtonShare } from '@/components/buttons'
+import { ArtistContactForm } from '@/components/forms'
 
 export default async function Page({
 	params,
 }: {
 	params: Promise<{ id: string }>
 }) {
+	const { user, session } = await getUserSession()
+
+	if (!user || !session) {
+		redirect('/auth/sign-in')
+	}
+
 	const { id } = await params
 	const artist = await ArtistService.getArtistById(id)
 
@@ -22,6 +32,11 @@ export default async function Page({
 			<EmptyResults message='Artist not found. Please check the URL or return to the artists list.' />
 		)
 	}
+
+	const userBookmarks = user?.bookmarks || []
+	const isBookmarked = userBookmarks.some(
+		(bookmark) => bookmark._id.toString() === artist._id!.toString()
+	)
 
 	return (
 		<PageWrapper pageName='artist-detail' classes='pb-32' hasContainer={false}>
@@ -198,9 +213,13 @@ export default async function Page({
 				</div>
 
 				{/* SIDEBAR / RIGHT COLUMN */}
-				<aside className='bg-accent-1 col-span-3'>
-					<h2 className='heading-subtitle'>Related Artists</h2>
-					{/* TODO: Implement related artists list */}
+				<aside className='bg-accent-1 col-span-3 p-4 space-y-8'>
+					<ButtonBookmark
+						artist={JSON.parse(JSON.stringify(artist))}
+						isBookmarked={isBookmarked}
+					/>
+					<ButtonShare />
+					<ArtistContactForm />
 				</aside>
 			</Container>
 		</PageWrapper>

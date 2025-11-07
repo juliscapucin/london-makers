@@ -74,10 +74,10 @@ export default function UserMenu() {
 				<div className='absolute right-0 mt-2 w-48 bg-accent-2 rounded-lg z-50'>
 					<div className='p-2'>
 						<Link
-							href='/dashboard'
+							href='/artists/saved'
 							className='block px-3 py-2 text-sm hover:bg-accent-3 rounded'
 							onClick={() => setIsOpen(false)}>
-							Dashboard
+							Saved Artists
 						</Link>
 						<Link
 							href='/profile'

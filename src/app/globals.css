@@ -217,4 +217,8 @@
 	.gutter-auto {
 		scrollbar-gutter: auto;
 	}
+
+	.spinner {
+		@apply w-4 h-4 border-2 border-secondary border-t-transparent rounded-full animate-spin;
+	}
 }

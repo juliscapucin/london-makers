@@ -189,14 +189,10 @@ export default function ArtistForm({
 			if (!confirmed) return
 		}
 
-		console.log('Image url:', imageUrl)
-
 		// Only delete from Cloudinary if it's an uploaded image
 		if (imageUrl?.startsWith('http')) {
 			// Extract public ID
 			const publicId = getPublicIdFromUrl(imageUrl)
-
-			console.log('Public ID to delete:', publicId)
 
 			try {
 				const response = await fetch(
@@ -861,7 +857,7 @@ export default function ArtistForm({
 					disabled={isPending}>
 					{isPending ? (
 						<>
-							<div className='w-4 h-4 border-2 border-secondary border-t-transparent rounded-full animate-spin' />
+							<div className='spinner' />
 							{isEdit ? 'Updating' : 'Creating'} {' Artist...'}
 						</>
 					) : isEdit ? (

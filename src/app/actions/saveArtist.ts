@@ -7,7 +7,7 @@ import { ArtistService } from '@/lib/services/artistService'
 import { getUserSession } from '@/lib/getUserSession'
 import { connectToDatabase } from '@/lib/services/database'
 
-export type ActionState = {
+type ActionState = {
 	success: boolean
 	error?: string
 	artistId?: string

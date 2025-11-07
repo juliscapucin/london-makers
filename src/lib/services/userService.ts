@@ -82,30 +82,60 @@ export class UserService {
 	}
 
 	/**
-	 * Get user's bookmarked artists
+	 * Add artist to user's bookmarks
 	 */
-	static async getUserBookmarks(userId: string): Promise<unknown[]> {
+	static async addUserBookmark(
+		userId: string,
+		artistId: string
+	): Promise<boolean> {
 		try {
 			await connectToDatabase()
 
-			const user = (await User.findOne({
-				$or: [
-					{ id: userId },
-					...(Types.ObjectId.isValid(userId)
-						? [{ _id: new Types.ObjectId(userId) }]
-						: []),
-				],
-			})
-				.populate({
-					path: 'bookmarks',
-					select: 'businessName artist_info type images _id',
-				})
-				.lean()) as (UserType & { bookmarks: unknown[] }) | null
+			const result = await User.updateOne(
+				{
+					$or: [
+						{ id: userId },
+						...(Types.ObjectId.isValid(userId)
+							? [{ _id: new Types.ObjectId(userId) }]
+							: []),
+					],
+				},
+				{ $addToSet: { bookmarks: artistId } }
+			).exec()
 
-			return user?.bookmarks || []
+			return result.modifiedCount > 0
 		} catch (error) {
-			console.error('Error fetching user bookmarks:', error)
-			return []
+			console.error('Error adding user bookmark:', error)
+			return false
+		}
+	}
+
+	/**
+	 * Remove artist from user's bookmarks
+	 */
+	static async removeUserBookmark(
+		userId: string,
+		artistId: string
+	): Promise<boolean> {
+		try {
+			await connectToDatabase()
+
+			const result = await User.updateOne(
+				{
+					$or: [
+						{ id: userId },
+						...(Types.ObjectId.isValid(userId)
+							? [{ _id: new Types.ObjectId(userId) }]
+							: []),
+					],
+				},
+				{ $pull: { bookmarks: artistId } }
+			).exec()
+
+			return result.modifiedCount > 0
+		} catch (error) {
+			console.error('Error removing user bookmark:', error)
+			return false
 		}
 	}
 }
