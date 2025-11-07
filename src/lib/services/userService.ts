@@ -1,9 +1,10 @@
 import { connectToDatabase } from '@/lib/services/database'
 import User from '@/lib/models/User'
 import { Types } from 'mongoose'
+import { ArtistType } from '@/types'
 
 export type UserType = {
-	_id?: Types.ObjectId
+	_id: Types.ObjectId
 	id: string
 	name: string
 	email: string
@@ -23,7 +24,7 @@ export class UserService {
 		try {
 			await connectToDatabase()
 
-			const user = await User.findOne({ id: userId }).lean<UserType>().exec()
+			const user = await User.findOne({ id: userId }).lean<UserType>()
 
 			return user ?? null
 		} catch (error) {
@@ -33,46 +34,7 @@ export class UserService {
 	}
 
 	/**
-	 * Toggle artist in user's bookmarks (add if not present, remove if present)
-	 */
-	// static async toggleUserBookmark(
-	// 	userId: string,
-	// 	artistId: string,
-	// 	isBookmarked: boolean
-	// ): Promise<boolean> {
-	// 	try {
-	// 		await connectToDatabase()
-
-	// 		const userQuery = {
-	// 			$or: [
-	// 				{ id: userId },
-	// 				...(Types.ObjectId.isValid(userId)
-	// 					? [{ _id: new Types.ObjectId(userId) }]
-	// 					: []),
-	// 			],
-	// 		}
-
-	// 		if (isBookmarked) {
-	// 			// Remove bookmark
-	// 			await User.updateOne(userQuery, {
-	// 				$pull: { bookmarks: artistId },
-	// 			}).exec()
-	// 		} else {
-	// 			// Add bookmark
-	// 			await User.updateOne(userQuery, {
-	// 				$addToSet: { bookmarks: artistId },
-	// 			}).exec()
-	// 		}
-
-	// 		return true
-	// 	} catch (error) {
-	// 		console.error('Error toggling user bookmark:', error)
-	// 		return false
-	// 	}
-	// }
-
-	/**
-	 * Toggle artist in user's bookmarks - determines current state from database
+	 * Toggle artist in user's bookmarks
 	 */
 	static async toggleUserBookmark(
 		userId: string,
@@ -112,6 +74,22 @@ export class UserService {
 		} catch (error) {
 			console.error('Error toggling user bookmark:', error)
 			return false
+		}
+	}
+
+	/**
+	 * Get user's bookmarks
+	 */
+	static async getUserBookmarks(userId: string): Promise<ArtistType[]> {
+		try {
+			await connectToDatabase()
+
+			const user = await User.findById(userId).populate('bookmarks')
+
+			return user?.bookmarks || []
+		} catch (error) {
+			console.error('Error fetching user bookmarks:', error)
+			return []
 		}
 	}
 }

@@ -22,7 +22,7 @@ export default function FeaturedArtists({ artists }: FeaturedArtistsProps) {
 			<h1 className='heading-headline mb-4'>Featured Artists</h1>
 			<ul className='flex w-full justify-between'>
 				{artists?.map((artist) => (
-					<li key={artist._id} className='w-[32%]'>
+					<li key={artist._id.toString()} className='w-[32%]'>
 						<ArtistCard artist={artist} />
 					</li>
 				))}

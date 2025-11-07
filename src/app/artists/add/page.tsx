@@ -1,9 +1,9 @@
 import { redirect } from 'next/navigation'
 
+import { getUserSession } from '@/lib/getUserSession'
+
 import { ArtistForm } from '@/components/forms'
 import { PageWrapper, Container } from '@/components/ui'
-
-import { getUserSession } from '@/lib/getUserSession'
 
 export default async function Page() {
 	const { userSession, session } = await getUserSession()

@@ -28,6 +28,6 @@ export type ArtistType = {
 	specialties: string[]
 	images: string[]
 	is_featured: boolean
-	createdAt: Date
-	updatedAt: Date
+	createdAt: string
+	updatedAt: string
 }

@@ -63,7 +63,7 @@ export default function ButtonBookmark({
 			<input type='hidden' name='artistId' value={artist._id.toString()} />
 
 			<button type='submit' className='btn btn-ghost w-full'>
-				Bookmark Artist{' '}
+				{isBookmarked ? 'Remove Bookmark' : 'Bookmark Artist'}{' '}
 				{isPending ? (
 					<div className='spinner' />
 				) : (

@@ -7,17 +7,16 @@ import { PageWrapper } from '@/components/ui'
 import { UserProfile } from '@/components'
 
 export default async function Page() {
-	const { session } = await getUserSession()
-	if (!session) redirect('/signin')
+	const { session, userSession } = await getUserSession()
+	if (!session || !userSession) redirect('/auth/signin')
 
-	const brandsData = await ArtistService.getBrandsByUserId(
-		session.user?.id || ''
-	)
+	const brandsData = await ArtistService.getBrandsByUserId(userSession.id)
 	const brands = JSON.parse(JSON.stringify(brandsData))
+	const parsedUser = JSON.parse(JSON.stringify(userSession))
 
 	return (
 		<PageWrapper pageName='profile'>
-			<UserProfile user={session.user} brands={brands} />
+			<UserProfile user={parsedUser} brands={brands} />
 		</PageWrapper>
 	)
 }

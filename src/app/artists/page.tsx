@@ -13,7 +13,7 @@ export default async function Page() {
 			<ul>
 				{artists.map((artist: ArtistType) => {
 					return (
-						<li key={artist._id}>
+						<li key={artist._id.toString()} className='mb-6'>
 							<ArtistCard artist={artist} />
 						</li>
 					)

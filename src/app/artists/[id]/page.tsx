@@ -68,7 +68,7 @@ export default async function Page({
 			<Container classes='pt-8 grid grid-cols-12 gap-8'>
 				{/* MAIN CONTENT / LEFT COLUMN */}
 				<div className='col-span-12 md:col-span-9'>
-					<ButtonBack label='artists' />
+					<ButtonBack />
 
 					{/* HEADER */}
 					<header className='space-y-4'>
