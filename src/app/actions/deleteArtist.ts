@@ -11,7 +11,7 @@ export async function deleteArtist(artistId: string) {
 	try {
 		const { user, session } = await getUserSession()
 		if (!user || !session) {
-			redirect('/auth/sign-in')
+			redirect('/auth/signin')
 		}
 		const userId = session.user.id
 		const artist = await ArtistService.getArtistById(artistId)

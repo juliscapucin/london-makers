@@ -16,15 +16,14 @@ export async function bookmarkArtist(
 	formData: FormData
 ): Promise<ActionState> {
 	try {
-		const { user, session } = await getUserSession()
-		if (!user || !session) {
-			redirect('/auth/sign-in')
+		const { userSession, session } = await getUserSession()
+		if (!userSession || !session) {
+			redirect('/auth/signin')
 		}
 		const artistId = formData.get('artistId')?.toString()
 		const isBookmarked = formData.get('isBookmarked') === 'true' // Current bookmark state
 
-		console.log(user._id?.toString())
-		if (!artistId || !user._id) {
+		if (!artistId || !userSession.id) {
 			return {
 				success: false,
 				error: 'Invalid ID',
@@ -32,9 +31,8 @@ export async function bookmarkArtist(
 		}
 
 		const toggleSuccess = await UserService.toggleUserBookmark(
-			user._id.toString(),
-			artistId,
-			isBookmarked
+			userSession.id,
+			artistId
 		)
 
 		if (!toggleSuccess) {

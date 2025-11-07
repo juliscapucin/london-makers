@@ -6,10 +6,10 @@ import { PageWrapper, Container } from '@/components/ui'
 import { getUserSession } from '@/lib/getUserSession'
 
 export default async function Page() {
-	const { user, session } = await getUserSession()
+	const { userSession, session } = await getUserSession()
 
-	if (!user || !session) {
-		redirect('/auth/sign-in')
+	if (!userSession || !session) {
+		redirect('/auth/signin')
 	}
 
 	return (

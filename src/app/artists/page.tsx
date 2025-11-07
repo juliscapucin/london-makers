@@ -1,14 +1,11 @@
-import { connectToDatabase } from '@/lib/services/database'
-import Artist from '@/lib/models/Artist'
 import { ArtistType } from '@/types'
 
+import { ArtistService } from '@/lib/services/artistService'
 import { ArtistCard } from '@/components'
 import { PageWrapper } from '@/components/ui'
 
 export default async function Page() {
-	await connectToDatabase()
-
-	const artists = await Artist.find({})
+	const artists = await ArtistService.getAllArtists()
 
 	return (
 		<PageWrapper pageName='artists'>

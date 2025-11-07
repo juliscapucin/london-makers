@@ -4,6 +4,24 @@ import { ArtistType } from '@/types'
 
 export class ArtistService {
 	/**
+	 * Get all artists
+	 */
+	static async getAllArtists(): Promise<ArtistType[]> {
+		try {
+			await connectToDatabase()
+
+			const artists = await Artist.find({})
+				.select('businessName artist_info type images _id createdAt updatedAt')
+				.lean()
+
+			return artists as unknown as ArtistType[]
+		} catch (error) {
+			console.error('Error fetching all artists:', error)
+			return []
+		}
+	}
+
+	/**
 	 * Get featured artists for the homepage
 	 */
 	static async getFeaturedArtists(limit = 3): Promise<ArtistType[]> {

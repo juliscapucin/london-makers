@@ -4,7 +4,7 @@ import { PageWrapper } from '@/components/ui'
 
 export default async function Page() {
 	const { session } = await getUserSession()
-	if (!session) redirect('/sign-in')
+	if (!session) redirect('/signin')
 
 	return (
 		<PageWrapper pageName='dashboard'>

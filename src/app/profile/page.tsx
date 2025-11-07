@@ -8,7 +8,7 @@ import { UserProfile } from '@/components'
 
 export default async function Page() {
 	const { session } = await getUserSession()
-	if (!session) redirect('/sign-in')
+	if (!session) redirect('/signin')
 
 	const brandsData = await ArtistService.getBrandsByUserId(
 		session.user?.id || ''

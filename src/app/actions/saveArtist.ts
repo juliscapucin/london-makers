@@ -155,17 +155,16 @@ export async function saveArtist(
 	currentState: ActionState | null,
 	formData: FormData
 ): Promise<ActionState> {
-	const { user, session } = await getUserSession()
+	const { userSession, session } = await getUserSession()
 
 	// Ensure user is authenticated
-	if (!user || !session) {
-		redirect('/auth/sign-in')
+	if (!userSession || !session) {
+		redirect('/auth/signin')
 	}
 
 	// Check if we're editing an existing artist
 	const artistId = formData.get('artistId')?.toString().trim()
 	const isEdit = Boolean(artistId)
-	const userId = session.user.id
 
 	try {
 		// Authorization check
@@ -180,8 +179,8 @@ export async function saveArtist(
 			}
 
 			if (
-				!(await ArtistService.isUserOwnerOfArtist(userId, artistId!)) &&
-				user.role !== 'admin'
+				!(await ArtistService.isUserOwnerOfArtist(userSession.id, artistId!)) &&
+				userSession.role !== 'admin'
 			) {
 				return {
 					success: false,
@@ -190,7 +189,7 @@ export async function saveArtist(
 			}
 		} else {
 			// For creating, check if user is admin
-			if (user.role !== 'admin') {
+			if (userSession.role !== 'admin') {
 				return {
 					success: false,
 					error: 'Admin access required',
@@ -201,7 +200,7 @@ export async function saveArtist(
 		// Parse form data
 		const { data: cleanedData, error: parseError } = parseFormData(
 			formData,
-			userId
+			userSession.id
 		)
 
 		if (parseError || !cleanedData) {

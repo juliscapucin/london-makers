@@ -1,5 +1,3 @@
-import { redirect } from 'next/navigation'
-
 import { getUserSession } from '@/lib/getUserSession'
 import { ArtistService } from '@/lib/services/artistService'
 import {
@@ -12,20 +10,19 @@ import {
 import { ArtistCarousel } from '@/components'
 import { ButtonBack, ButtonBookmark, ButtonShare } from '@/components/buttons'
 import { ArtistContactForm } from '@/components/forms'
+import { UserService } from '@/lib/services/userService'
 
 export default async function Page({
 	params,
 }: {
 	params: Promise<{ id: string }>
 }) {
-	const { user, session } = await getUserSession()
-
-	if (!user || !session) {
-		redirect('/auth/sign-in')
-	}
+	const { userSession, session } = await getUserSession()
 
 	const { id } = await params
 	const artist = await ArtistService.getArtistById(id)
+
+	let isBookmarked = false
 
 	if (!artist) {
 		return (
@@ -33,10 +30,13 @@ export default async function Page({
 		)
 	}
 
-	const userBookmarks = user?.bookmarks || []
-	const isBookmarked = userBookmarks.some(
-		(bookmark) => bookmark._id.toString() === artist._id!.toString()
-	)
+	if (userSession) {
+		const userBookmarks = userSession.bookmarks
+
+		isBookmarked = userBookmarks.some(
+			(bookmark) => bookmark.toString() === artist._id.toString()
+		)
+	}
 
 	return (
 		<PageWrapper pageName='artist-detail' classes='pb-32' hasContainer={false}>
@@ -217,6 +217,7 @@ export default async function Page({
 					<ButtonBookmark
 						artist={JSON.parse(JSON.stringify(artist))}
 						isBookmarked={isBookmarked}
+						hasSession={!!session}
 					/>
 					<ButtonShare />
 					<ArtistContactForm />

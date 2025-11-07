@@ -16,7 +16,7 @@ export default async function Page({
 	const { user, session } = await getUserSession()
 
 	if (!user || !session) {
-		redirect('/auth/sign-in')
+		redirect('/auth/signin')
 	}
 
 	const artistData = JSON.parse(
