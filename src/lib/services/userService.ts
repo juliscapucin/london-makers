@@ -82,59 +82,41 @@ export class UserService {
 	}
 
 	/**
-	 * Add artist to user's bookmarks
+	 * Toggle artist in user's bookmarks (add if not present, remove if present)
 	 */
-	static async addUserBookmark(
+	static async toggleUserBookmark(
 		userId: string,
-		artistId: string
+		artistId: string,
+		isBookmarked: boolean
 	): Promise<boolean> {
 		try {
 			await connectToDatabase()
 
-			const result = await User.updateOne(
-				{
-					$or: [
-						{ id: userId },
-						...(Types.ObjectId.isValid(userId)
-							? [{ _id: new Types.ObjectId(userId) }]
-							: []),
-					],
-				},
-				{ $addToSet: { bookmarks: artistId } }
-			).exec()
+			const userQuery = {
+				$or: [
+					{ id: userId },
+					...(Types.ObjectId.isValid(userId)
+						? [{ _id: new Types.ObjectId(userId) }]
+						: []),
+				],
+			}
 
-			return result.modifiedCount > 0
+			let result
+			if (isBookmarked) {
+				// Remove bookmark
+				result = await User.updateOne(userQuery, {
+					$pull: { bookmarks: artistId },
+				}).exec()
+			} else {
+				// Add bookmark
+				result = await User.updateOne(userQuery, {
+					$addToSet: { bookmarks: artistId },
+				}).exec()
+			}
+
+			return true
 		} catch (error) {
-			console.error('Error adding user bookmark:', error)
-			return false
-		}
-	}
-
-	/**
-	 * Remove artist from user's bookmarks
-	 */
-	static async removeUserBookmark(
-		userId: string,
-		artistId: string
-	): Promise<boolean> {
-		try {
-			await connectToDatabase()
-
-			const result = await User.updateOne(
-				{
-					$or: [
-						{ id: userId },
-						...(Types.ObjectId.isValid(userId)
-							? [{ _id: new Types.ObjectId(userId) }]
-							: []),
-					],
-				},
-				{ $pull: { bookmarks: artistId } }
-			).exec()
-
-			return result.modifiedCount > 0
-		} catch (error) {
-			console.error('Error removing user bookmark:', error)
+			console.error('Error toggling user bookmark:', error)
 			return false
 		}
 	}

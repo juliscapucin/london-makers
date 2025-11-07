@@ -3,7 +3,6 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
-import { ArtistService } from '@/lib/services/artistService'
 import { getUserSession } from '@/lib/getUserSession'
 import { UserService } from '@/lib/services/userService'
 
@@ -21,43 +20,27 @@ export async function bookmarkArtist(
 		if (!user || !session) {
 			redirect('/auth/sign-in')
 		}
-		const userId = session.user.id
 		const artistId = formData.get('artistId')?.toString()
 		const isBookmarked = formData.get('isBookmarked') === 'true' // Current bookmark state
 
-		if (!artistId) {
+		console.log(user._id?.toString())
+		if (!artistId || !user._id) {
 			return {
 				success: false,
-				error: 'Invalid artist ID',
+				error: 'Invalid ID',
 			}
 		}
 
-		// If unbookmarking, remove the bookmark
-		if (isBookmarked) {
-			const removeSuccess = await UserService.removeUserBookmark(
-				userId,
-				artistId || ''
-			)
+		const toggleSuccess = await UserService.toggleUserBookmark(
+			user._id.toString(),
+			artistId,
+			isBookmarked
+		)
 
-			if (!removeSuccess) {
-				return {
-					success: false,
-					error: 'Failed to remove bookmark',
-				}
-			}
-
-			revalidatePath('/artists/saved')
-			revalidatePath(`/artists/${artistId}`)
-			return { success: true }
-		}
-
-		// If bookmarking, add the bookmark
-		const bookmarkSuccess = await UserService.addUserBookmark(userId, artistId)
-
-		if (!bookmarkSuccess) {
+		if (!toggleSuccess) {
 			return {
 				success: false,
-				error: 'Failed to bookmark artist',
+				error: `Failed to ${isBookmarked ? 'remove' : 'add'} bookmark`,
 			}
 		}
 

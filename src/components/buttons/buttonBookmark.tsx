@@ -19,15 +19,11 @@ export default function ButtonBookmark({
 	const [state, formAction, isPending] = useActionState(bookmarkArtist, null)
 	const { showSuccess, showError } = useNotifications()
 
-	console.log('is bookmarked: ', isBookmarked)
-
 	// Handle form state changes
 	useEffect(() => {
 		if (state?.success) {
 			showSuccess(
-				`Artist has been ${
-					isBookmarked ? 'bookmarked' : 'unbookmarked'
-				} successfully!`,
+				`Bookmark has been ${isBookmarked ? 'added' : 'removed'} successfully!`,
 				'Success',
 				5000
 			)
