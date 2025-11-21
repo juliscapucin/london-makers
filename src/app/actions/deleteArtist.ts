@@ -9,8 +9,8 @@ import { ArtistService } from '@/lib/services/artistService'
 
 export async function deleteArtist(artistId: string) {
 	try {
-		const { user, session } = await getUserSession()
-		if (!user || !session) {
+		const { userSession, session } = await getUserSession()
+		if (!userSession || !session) {
 			redirect('/auth/signin')
 		}
 		const userId = session.user.id
