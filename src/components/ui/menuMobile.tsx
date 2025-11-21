@@ -7,11 +7,11 @@ import gsap from 'gsap'
 
 import { ButtonBurger, ButtonClose } from '@/components/buttons'
 
-import type { NavLink } from '@/types'
+import type { NavLinkType } from '@/types'
 import { useGSAP } from '@gsap/react'
 
 type NavLinksProps = {
-	navLinks: NavLink[]
+	navLinks: NavLinkType[]
 }
 
 export default function MenuMobile({ navLinks }: NavLinksProps) {
