@@ -20,13 +20,9 @@ export default function MenuMobile({ navLinks }: NavLinksProps) {
 	const router = useRouter()
 
 	const [isMenuOpen, setIsMenuOpen] = useState(false)
-	const [slug, setSlug] = useState<string | null>(null)
 
-	const toggleMenu = (slug?: string | null) => {
+	const toggleMenu = () => {
 		setIsMenuOpen((prev) => !prev)
-		if (slug) {
-			router.push(slug)
-		}
 	}
 
 	useGSAP(
@@ -40,7 +36,6 @@ export default function MenuMobile({ navLinks }: NavLinksProps) {
 					ease: 'power4.out',
 					onComplete: () => {
 						document.body.style.overflow = 'hidden'
-						if (slug) router.push(slug)
 					},
 				})
 			} else {
@@ -116,7 +111,10 @@ export default function MenuMobile({ navLinks }: NavLinksProps) {
 										key={link.slug}>
 										<button
 											className='block font-primary disabled:opacity-40 transition-opacity duration-500'
-											onClick={() => toggleMenu(link.slug)}
+											onClick={() => {
+												toggleMenu()
+												router.push(link.slug)
+											}}
 											disabled={isCurrentPage}
 											aria-current={isCurrentPage ? 'location' : undefined}
 											tabIndex={isMenuOpen ? 0 : -1}>
